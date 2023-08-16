@@ -1,0 +1,449 @@
+blueprint:
+  name: Light Control With Helpers
+  description: JJs light control with helper inputs
+  domain: automation
+  author: Jeffreyjelly
+  input:
+    #input_boolean for enabling of the automation
+    in_bool_auto_enable:
+      name: input_boolean helper for enabling and disabling this automation
+      selector:
+        entity:
+          domain: input_boolean
+    #the light or light group to be controlled
+    light_target:
+      name: Light or Light Group to Target
+      selector:
+        entity:
+          domain: light
+    #the sensor below triggers on "detected" (triggers lights to turn on)
+    motion_detected_device:
+      name: Motion Detection ("on" triggers the lights to turn on)
+      selector:
+        entity:
+          domain: binary_sensor
+    #the sensor below triggers on "clear" (triggers a timer to run in certain condition)
+    motion_not_detected_device:
+      name: Motion Not Detected ("off" triggers a timer to run for certain conditions met)
+      selector:
+        entity:
+          domain: binary_sensor
+    #timer below controls the time it takes from no motion to dimmed lights if dimmable
+    timer_on_to_dim:
+      name: Timer for motion stopped to dim (time it takes from no motion to dimmed state)
+      selector:
+        entity:
+          domain: timer
+    #input_number for percentage of dim amount
+    in_num_perc_dimmed:
+      name: input_number helper for choosing how much the lights dim (-100 - 0)
+      selector:
+        entity:
+          domain: input_number
+    #input_number for no motion to dim to set the above timer during the day
+    in_num_on_light_day:
+      name: input_number helper for no motion to dim to set the timer during the day in seconds.
+      selector:
+        entity:
+          domain: input_number
+    #input_number for no motion to dim to set the above timer during the night
+    in_num_on_light_night:
+      name: input_number helper for no motion to dim to set the timer during the night.
+      selector:
+        entity:
+          domain: input_number
+    #timer below controls the time it takes from dimmed lights to off as well as remembering last on state.
+    timer_dim_to_off:
+      name: Timer for dimmed to off and time to recover last on state before reverting to scene.
+      selector:
+        entity:
+          domain: timer
+    #input_number for dim to off to set the above timer during the day
+    in_num_dim_light_day:
+      name: input_number helper for dimmed to off to set the timer during the day.
+      selector:
+        entity:
+          domain: input_number
+    #input_number for dim to off to set the above timer during the night
+    in_num_dim_light_night:
+      name: input_number helper for dimmed to off to set the timer during the night.
+      selector:
+        entity:
+          domain: input_number
+    #time setting for day
+    in_datetime_day_time:
+      name: input_datetime helper for time for day scene.
+      selector:
+        entity:
+          domain: input_datetime
+    #scene setting for day
+    scene_day_light:
+      name: Day scene for the lights.
+      selector:
+        entity:
+          domain: scene
+    #time setting for night
+    in_datetime_night_time:
+      name: input_datetime helper for time for night light scene.
+      selector:
+        entity:
+          domain: input_datetime
+    #scene setting for night
+    scene_night_light:
+      name: Night scene for the lights.
+      selector:
+        entity:
+          domain: scene
+    #input_number for transition time for light turning on
+    in_num_transition_time:
+      name: input_number helper for light transitioning on in seconds (suggested limit 1-10).
+      selector:
+        entity:
+          domain: input_number
+    #input_number for transition time for light turning to and from dim.
+    in_num_transition_time_fast:
+      name: input_number helper for light transitioning on in seconds for dim scenarios (suggested limit 1-3).
+      selector:
+        entity:
+          domain: input_number #input_number for transition time for light turning to and from dim.
+    temp_scene_name:
+      name: Temporary scene name that will be created to recover last on state (make sure it's unique)
+      default: "jjs_recovery_scene_for_zone_"
+
+variables:
+  #   in_bool_auto_enable_ent: !input "in_bool_auto_enable"
+  #   light_target_ent: !input "light_target"
+  #   motion_detected_device_ent: !input "motion_detected_device"
+  #   motion_not_detected_device_ent: !input "motion_not_detected_device"
+  #   timer_on_to_dim_ent: !input "timer_on_to_dim"
+  in_num_perc_dimmed_ent: !input "in_num_perc_dimmed"
+  in_num_on_light_day_ent: !input "in_num_on_light_day"
+  in_num_on_light_night_ent: !input "in_num_on_light_night"
+  #   timer_dim_to_off_ent: !input "timer_dim_to_off"
+  in_num_dim_light_day_ent: !input "in_num_dim_light_day"
+  in_num_dim_light_night_ent: !input "in_num_dim_light_night"
+  #   in_datetime_day_time_ent: !input "in_datetime_day_time"
+  #   scene_day_light_ent: !input "scene_day_light"
+  #   in_datetime_night_time_ent: !input "in_datetime_night_time"
+  #   scene_night_light_ent: !input "scene_night_light"
+  in_num_transition_time_ent: !input "in_num_transition_time"
+  in_num_transition_time_fast_ent: !input "in_num_transition_time_fast"
+  temp_scene_name_ent: !input "temp_scene_name"
+
+alias: hallway new test
+description: ""
+trigger:
+  - platform: state
+    entity_id: !input motion_detected_device
+    from: "off"
+    to: "on"
+    id: motion_detected
+    alias: motion_detected_device > motion_detected
+  - platform: state
+    entity_id: !input motion_not_detected_device
+    to: "off"
+    id: motion_stopped
+    alias: motion_not_detected_device  > motion_stopped
+  - platform: state
+    entity_id: !input motion_not_detected_device
+    to: "on"
+    id: motion_stopped_canceled
+    alias: motion_not_detected_device > motion_stopped_canceled
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: !input "timer_on_to_dim"
+    id: motion_stopped_to_dim
+    alias: timer_on_to_dim finished > motion_stopped_to_dim
+  - platform: event
+    event_type: timer.finished
+    event_data:
+      entity_id: !input "timer_dim_to_off"
+    id: motion_stopped_to_off
+    alias: timer_dim_to_off finished > motion_stopped_to_off
+condition: []
+action:
+  - if:
+      - condition: state
+        entity_id: !input "in_bool_auto_enable"
+        state: "on"
+    then:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: motion_detected
+            sequence:
+              - if:
+                  - condition: and
+                    conditions:
+                      - condition: state
+                        entity_id: !input "light_target"
+                        state: "off"
+                      - condition: state
+                        entity_id: !input "timer_on_to_dim"
+                        state: idle
+                      - condition: state
+                        entity_id: !input "timer_dim_to_off"
+                        state: idle
+                then:
+                  - if:
+                      - condition: time
+                        before: !input "in_datetime_night_time"
+                        after: !input "in_datetime_day_time"
+                        alias: Time condition day
+                    then:
+                      - service: scene.turn_on
+                        target:
+                          entity_id: !input "scene_day_light"
+                        data:
+                          transition: >-
+                            {{states(in_num_transition_time_ent) | int }}
+                        metadata: {}
+                    else:
+                      - if:
+                          - condition: time
+                            before: !input "in_datetime_day_time"
+                            after: !input "in_datetime_night_time"
+                            alias: Time condition night
+                        then:
+                          - service: scene.turn_on
+                            target:
+                              entity_id: !input "scene_night_light"
+                            data:
+                              transition: >-
+                                {{ states(in_num_transition_time_ent)| int }}
+                            metadata: {}
+                        alias: Night path
+                    alias: Set light scene since lights were off
+                else:
+                  - if:
+                      - condition: state
+                        entity_id: !input "timer_dim_to_off"
+                        state: active
+                    then:
+                      - service: scene.turn_on
+                        data:
+                          transition: >-
+                            {{ states(in_num_transition_time_fast_ent) | int }}
+                        target:
+                          entity_id:
+                            - scene.{{states(temp_scene_name_ent)}}
+                      - service: timer.cancel
+                        data: {}
+                        target:
+                          entity_id: !input "timer_dim_to_off"
+                    alias: >-
+                      if timer dim_to_off is active revert to saved scene else,
+                      clear out the on_to_dim timer
+                    else:
+                      - service: timer.cancel
+                        data: {}
+                        target:
+                          entity_id: !input "timer_on_to_dim"
+                alias: >-
+                  if all lights are off and all timers are idle set scene else,
+                  recover scene
+          - conditions:
+              - condition: trigger
+                id:
+                  - motion_stopped
+            sequence:
+              - if:
+                  - condition: time
+                    before: !input "in_datetime_night_time"
+                    after: !input "in_datetime_day_time"
+                    alias: Time condition day
+                then:
+                  - service: timer.start
+                    data:
+                      duration: >-
+                        {{
+                        (states(in_num_on_light_day_ent)|int
+                        )|timestamp_custom('%H:%M:%S', false) }}
+                    target:
+                      entity_id: !input "timer_on_to_dim"
+                else:
+                  - if:
+                      - condition: time
+                        before: !input "in_datetime_day_time"
+                        after: !input "in_datetime_night_time"
+                        alias: Time condition night
+                    then:
+                      - service: timer.start
+                        data:
+                          duration: >-
+                            {{
+                            (states(in_num_on_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
+                            false) }}
+                        target:
+                          entity_id: !input "timer_on_to_dim"
+                    alias: Night condition
+                alias: startup on_to_dim timer based on day
+          - conditions:
+              - condition: trigger
+                id:
+                  - motion_stopped_canceled
+            sequence:
+              - if:
+                  - condition: state
+                    entity_id: !input "timer_dim_to_off"
+                    state: active
+                then:
+                  - service: scene.turn_on
+                    data:
+                      transition: >-
+                        {{ states(in_num_transition_time_fast_ent) |
+                        int }}
+                    target:
+                      entity_id:
+                        - scene.{{states(temp_scene_name_ent)}}
+                  - service: timer.cancel
+                    data: {}
+                    target:
+                      entity_id: !input "timer_dim_to_off"
+                alias: >-
+                  if timer dim_to_off is active revert to saved scene and cancel
+                  timer else, cancel the on_to_dim timer
+                else:
+                  - service: timer.cancel
+                    data: {}
+                    target:
+                      entity_id: !input "timer_on_to_dim"
+          - conditions:
+              - condition: trigger
+                id:
+                  - motion_stopped_to_dim
+            sequence:
+              - if:
+                  - condition: and
+                    conditions:
+                      - condition: state
+                        entity_id: !input "light_target"
+                        state: "on"
+                      - condition: state
+                        entity_id: !input "timer_on_to_dim"
+                        state: idle
+                then:
+                  - service: scene.create
+                    data:
+                      snapshot_entities: !input "light_target"
+                      scene_id: !input "temp_scene_name"
+                    enabled: true
+                  - delay:
+                      hours: 0
+                      minutes: 0
+                      seconds: 0
+                      milliseconds: 100
+                  - service: light.turn_on
+                    data:
+                      brightness_step_pct: >-
+                        {{ states(in_num_perc_dimmed_ent) |
+                        int }}
+                      transition: >-
+                        {{ states(in_num_transition_time_fast_ent) |
+                        int }}
+                    target:
+                      entity_id: !input "light_target"
+                  - delay:
+                      hours: 0
+                      minutes: 0
+                      seconds: >-
+                        {{ states(in_num_transition_time_fast_ent) |
+                        int }}
+                      milliseconds: 0
+                  - if:
+                      - condition: state
+                        entity_id: !input "light_target"
+                        state: "off"
+                    then:
+                      - service: light.turn_on
+                        data:
+                          brightness_pct: 1
+                        target:
+                          entity_id: !input "light_target"
+                  - if:
+                      - condition: time
+                        before: !input "in_datetime_night_time"
+                        after: !input "in_datetime_day_time"
+                        alias: Time condition day
+                    then:
+                      - service: timer.start
+                        data:
+                          duration: >-
+                            {{
+                            (states(in_num_dim_light_day_ent)|int)|timestamp_custom('%H:%M:%S',
+                            false) }}
+                        target:
+                          entity_id: !input "timer_dim_to_off"
+                    else:
+                      - if:
+                          - condition: time
+                            before: !input "in_datetime_day_time"
+                            after: !input "in_datetime_night_time"
+                            alias: Time condition night
+                        then:
+                          - service: timer.start
+                            data:
+                              duration: >-
+                                {{
+                                (states(in_num_dim_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
+                                false) }}
+                            target:
+                              entity_id: !input "timer_dim_to_off"
+                        alias: Night condition
+                enabled: true
+          - conditions:
+              - condition: trigger
+                id:
+                  - motion_stopped_to_off
+            sequence:
+              - if:
+                  - condition: and
+                    conditions:
+                      - condition: state
+                        entity_id: !input "light_target"
+                        state: "on"
+                then:
+                  - service: light.turn_off
+                    data:
+                      transition: >-
+                        {{ states(in_num_transition_time_ent) |
+                        int }}
+                    target:
+                      entity_id: !input "light_target"
+                  - if:
+                      - condition: time
+                        before: !input "in_datetime_night_time"
+                        after: !input "in_datetime_day_time"
+                        alias: Time condition day
+                    then:
+                      - service: timer.start
+                        data:
+                          duration: >-
+                            {{
+                            (states(in_num_dim_light_day_ent)|int)|timestamp_custom('%H:%M:%S', false) }}
+                        target:
+                          entity_id: !input "timer_dim_to_off"
+                    else:
+                      - if:
+                          - condition: time
+                            before: !input "in_datetime_day_time"
+                            after: !input "in_datetime_night_time"
+                            alias: Time condition night
+                        then:
+                          - service: timer.start
+                            data:
+                              duration: >-
+                                {{
+                                (states(in_num_dim_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
+                                false) }}
+                            target:
+                              entity_id: !input "timer_dim_to_off"
+                        alias: Night condition
+                enabled: true
+                else:
+                  - stop: >-
+                      Stopped because last timer expired with lights off and
+                      this is the end of the automation.
+    alias: if boolean for automation enable is on
+mode: single
