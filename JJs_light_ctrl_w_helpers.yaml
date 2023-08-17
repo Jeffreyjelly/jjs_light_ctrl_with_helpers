@@ -156,7 +156,7 @@ blueprint:
       
       - suggested range:
 
-      > (0s to 10s)
+      > (1s to 10s)
       '
       selector:
         entity:
@@ -169,7 +169,7 @@ blueprint:
       
       - suggested range:
 
-      > (0s to 3s)
+      > (1s to 3s)
       '
       selector:
         entity:
@@ -327,7 +327,7 @@ action:
                             {{ states(in_num_transition_time_fast_ent) | int }}
                         target:
                           entity_id:
-                            - "scene.{{states(temp_scene_name_ent)}}"
+                            - scene.{{ temp_scene_name_ent }}
                       - service: timer.cancel
                         data: {}
                         target:
@@ -396,7 +396,7 @@ action:
                         int }}
                     target:
                       entity_id:
-                        - "scene.{{states(temp_scene_name_ent)}}"
+                        - scene.{{ temp_scene_name_ent }}
                   - service: timer.cancel
                     data: {}
                     target:
