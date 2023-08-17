@@ -1,120 +1,211 @@
 blueprint:
   name: ⚡💡 JJs Light Control With Helpers 💡⚡
-  description: Light control automation that
-    1. Wont override the current light state
-    2. Two light scenes, one for day and night
-    3. controllable via other automations via using the helpers called with the blueprint
-    4. test
+  description: "
+    ## Light control automation that has:
+
+    - Two light scenes, one for day and night
+
+    - Wont override the current light state if manually changed
+
+    - Dims to show the lights are about to turn off
+
+    - Time period after lights are off and motion is active to recover the last
+    light state.
+
+    - Fully customizable with the helpers
+
+    - Controllable via other automations via using the helpers called with the
+    blueprint
+    "
   domain: automation
   source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/JJs_light_ctrl_w_helpers.yaml
   author: Jeffreyjelly
   input:
-    #the light or light group to be controlled
     light_target:
-      name: Light or Light Group to Target
+      name: 💡 Light
+      description: '- Light or Light Group to Target'
       selector:
         entity:
           domain: light
-    #input_boolean for enabling of the automation
     in_bool_auto_enable:
-      name: input_boolean Enable
-      description: helper for enabling and disabling this automation
+      name: 🔛 input_boolean Enable
+      description: '- input_boolean helper for enabling and disabling this 
+      automation'
       selector:
         entity:
           domain: input_boolean
-    #the sensor below triggers on "detected" (triggers lights to turn on)
     motion_detected_device:
-      name: Motion Detection ("on" triggers the lights to turn on)
+      name: 🕵️‍♂️ Motion Detection 🕵️‍♀️
+      description: '- A binary_sensor input that triggers the lights to turn 
+      on.'
       selector:
         entity:
           domain: binary_sensor
-    #the sensor below triggers on "clear" (triggers a timer to run in certain condition)
     motion_not_detected_device:
-      name: Motion Not Detected ("off" triggers a timer to run for certain conditions met)
+      name: 🕵️‍♀️⛔ Motion Not Detected ⛔🕵️‍♂️
+      description: '
+      - A binary_sensor that when triggered off starts the first motion to dim 
+      timer.
+
+      - Also will only work to keep lights on if either of the two timers are
+      active when this gets turned to on again.
+      '
       selector:
         entity:
           domain: binary_sensor
-    #timer below controls the time it takes from no motion to dimmed lights if dimmable
     timer_on_to_dim:
-      name: Timer for motion stopped to dim (time it takes from no motion to dimmed state)
+      name: ⏲🌕>🌓 Timer for motion stopped to dim
+      description: '- Timer used from no motion to dimmed state that is set via
+      the automation.'
       selector:
         entity:
           domain: timer
-    #timer below controls the time it takes from dimmed lights to off as well as remembering last on state.
     timer_dim_to_off:
-      name: Timer for dimmed to off and time to recover last on state before reverting to scene.
+      name: ⏲🌓>🌑 Timer for dimmed to off
+      description: '
+      - Timer used from dimmed to off state that is set via the automation.
+      
+      - Also used for time to recover last on state before reverting to scene 
+      on the next turn on.
+      '
       selector:
         entity:
           domain: timer
-    #input_number for percentage of dim amount
     in_num_perc_dimmed:
-      name: input_number helper for choosing how much the lights dim (-100 - 0)
+      name: 🌕>🌓%❔ Light dimming percentage
+      description: '
+      - input_number helper for choosing how much the lights dim
+      
+      - suggested range:
+
+      > (-99 to -1)
+      '
       selector:
         entity:
           domain: input_number
-    #input_number for no motion to dim to set the above timer during the day
     in_num_on_light_day:
-      name: input_number helper for no motion to dim to set the timer during the day in seconds.
+      name: ⛔🕵️‍♂️>🌓⏲🌞 No motion to dim in seconds (day)
+      description: '
+      - input_number helper for no motion to dim to set the timer during the
+      day in seconds.
+
+      - suggested range:
+
+      > (20s to 7200s)
+
+      > or otherwise 20 seconds to 2 hours
+      '
       selector:
         entity:
           domain: input_number
-    #input_number for no motion to dim to set the above timer during the night
     in_num_on_light_night:
-      name: input_number helper for no motion to dim to set the timer during the night.
+      name: ⛔🕵️‍♂️>🌓⏲🌙 No motion to dim in seconds (night)
+      description: '
+      - input_number helper for no motion to dim to set the timer during the
+      night in seconds.
+
+      - suggested range:
+
+      > (20s to 7200s)
+
+      > or otherwise 20 seconds to 2 hours
+      '
       selector:
         entity:
           domain: input_number
-    #input_number for dim to off to set the above timer during the day
     in_num_dim_light_day:
-      name: input_number helper for dimmed to off to set the timer during the day.
+      name: 🌓>🌑⏲🌞 Dimmed to off in seconds (day)
+      description: '
+      - input_number helper for dimmed to off to set the timer during the day
+      in seconds.
+
+      - suggested range:
+
+      > (10s to 1800s)
+
+      > or otherwise 10 seconds to 30 minutes
+      '
       selector:
         entity:
           domain: input_number
-    #input_number for dim to off to set the above timer during the night
     in_num_dim_light_night:
-      name: input_number helper for dimmed to off to set the timer during the night.
+      name: 🌓>🌑⏲🌙 Dimmed to off in seconds (night)
+      description: '
+      - input_number helper for dimmed to off to set the timer during the night
+      in seconds.
+
+      - suggested range:
+
+      > (10s to 1800s)
+
+      > or otherwise 10 seconds to 30 minutes
+      '
       selector:
         entity:
           domain: input_number
     #input_number for transition time for light turning on
     in_num_transition_time:
-      name: input_number helper for light transitioning on in seconds (suggested limit 1-10).
+      name: 💡🆙⏳ Light on transition time normal
+      description: '
+      - input_number helper for light transitioning on and off in seconds
+      
+      - suggested range:
+
+      > (1s to 10s)
+      '
       selector:
         entity:
           domain: input_number
-    #input_number for transition time for light turning to and from dim.
     in_num_transition_time_fast:
-      name: input_number helper for light transitioning on in seconds for dim scenarios (suggested limit 1-3).
+      name: 💡🆙⏳⏩ Light on transition time fast
+      description: '
+      - input_number helper for light transitioning to and from dimmed states
+      in seconds. (you&rsquo;ll want this fast to see the transition)
+      
+      - suggested range:
+
+      > (1s to 3s)
+      '
       selector:
         entity:
           domain: input_number
-    #time setting for day
     in_datetime_day_time:
-      name: input_datetime helper for time for day scene.
+      name: 📅⌚🌞 datetime start for day scene
+      description: '- input_datetime helper start time for activating the day 
+      scene selected below.'
       selector:
         entity:
           domain: input_datetime
-    #time setting for night
     in_datetime_night_time:
-      name: input_datetime helper for time for night light scene.
+      name: 📅⌚🌙 datetime start for night scene
+      description: '- input_datetime helper start time for activating the day 
+      scene selected below.'
       selector:
         entity:
           domain: input_datetime
-    #scene setting for day
     scene_day_light:
-      name: Day scene for the lights.
+      name: 🌞🎨 Day scene
+      description: '- scene for the day setting.'
       selector:
         entity:
           domain: scene
     #scene setting for night
     scene_night_light:
-      name: Night scene for the lights.
+      name: 🌙🎨 Night scene for the lights.
+      description: '- scene for the night setting.'
       selector:
         entity:
           domain: scene
     temp_scene_name:
-      name: Temporary scene name that will be created to recover last on state (make sure it's unique)
-      default: "jjs_recovery_scene_for_zone_"
+      name: 🎨🎈 Temporary scene name
+      description: '- Temporary scene name that will be created to recover the
+      last on state 
+      
+      > (make sure it&rsquo;s unique and doesn&rsquo;t already exist)
+      
+      > (and also make sure it starts with &rsquo;scene.&rsquo;)
+      '
+      default: "scene.jjs_recovery_scene_for_zone_"
 
 variables:
   #   light_target_ent: !input "light_target"
