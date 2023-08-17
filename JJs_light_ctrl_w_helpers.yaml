@@ -16,6 +16,11 @@ blueprint:
 
     - Controllable via other automations via using the helpers called with the
     blueprint
+
+
+    ### Required helpers list
+
+    - Please see the [readme.md](https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/README.md)
     "
   domain: automation
   source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/JJs_light_ctrl_w_helpers.yaml
