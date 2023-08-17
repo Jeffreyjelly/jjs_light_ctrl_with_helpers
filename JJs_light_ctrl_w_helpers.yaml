@@ -2,6 +2,7 @@ blueprint:
   name: Light Control With Helpers
   description: JJs light control with helper inputs
   domain: automation
+  source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/JJs_light_ctrl_w_helpers.yaml
   author: Jeffreyjelly
   input:
     #input_boolean for enabling of the automation
