@@ -5,9 +5,11 @@ Home Assistant Blueprint for controlling the lights with a daytime and nighttime
 
 ### input_boolean [ 1 ]:
  - helper_`{name_of_area}`_auto_enable
+   - > (a boolean for you to disable the automation when needed)
 
 ### light or light Group [ 1 ]:
  - group_`{name_of_area}`_all
+   - > (the light(s) to control)
 
 ### binary_sensor [ 2 ]:
  - motion detection
@@ -15,3 +17,40 @@ Home Assistant Blueprint for controlling the lights with a daytime and nighttime
  - motion not detection
    - > (PIR sensor, mmwave or any other means)
 
+### timer [ 2 ]:
+ - timer_`{name_of_area}`_motion_to_dim
+   - > (keep at default 0 as the automation uses this as a control from no motion to dim)
+ - timer_`{name_of_area}`_dim_to_off
+   - > (keep at default 0 as the automation uses this as a control from dim to off)
+
+### input_numbers [ 7 ]:
+ - in_num_perc_dimmed
+   - > (-99 to -1  percentage that your lights are dimmed by before turn off)
+ - in_num_`{name_of_area}`_on_light_day_dly
+   - > (0 to ?  time in seconds from no motion to dim during the day)
+ - in_num_`{name_of_area}`_on_light_night_dly
+   - > (0 to ?  time in seconds from no motion to dim during the night)
+ - in_num_`{name_of_area}`_dim_light_day_dly
+   - > (0 to ?  time in seconds from dim to off during the day)
+ - in_num_`{name_of_area}`_dim_light_night_dly
+   - > (0 to ?  time in seconds from dim to off during the night)
+ - in_num_transition_time_norm
+   - > (0 to ?(10)  time in seconds for light to transition from off to on)
+ - in_num_transition_time_fast
+   - > (0 to ?(10)  time in seconds for light to transition from dim to on or vice versa)
+
+### input_daytime [ 2 ]:
+ - in_datetime_day
+   - > (Whenever you want the lights to start to use the day scene)
+ - in_datetime_night
+   - > (Whenever you want the lights to start to use the night scene)
+
+### scenes [ 2 ]:
+ - scene_`{name_of_area}`_daytime
+   - > (day scene that should be controlling the lights listed for your lights chosen above)
+ - scene_`{name_of_area}`_nighttime
+   - > (night scene that should be controlling the lights listed for your lights chosen above)
+
+
+## Ideas to add later
+ - another input_number for controlling the length of time it preserves the temporary scene instead of just copying the `in_num_{name_of_area}_dim_light_{day}_dly`.
