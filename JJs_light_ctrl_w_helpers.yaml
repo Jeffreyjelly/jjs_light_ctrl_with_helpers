@@ -156,7 +156,7 @@ blueprint:
       
       - suggested range:
 
-      > (1s to 10s)
+      > (0s to 10s)
       '
       selector:
         entity:
@@ -169,7 +169,7 @@ blueprint:
       
       - suggested range:
 
-      > (1s to 3s)
+      > (0s to 3s)
       '
       selector:
         entity:
