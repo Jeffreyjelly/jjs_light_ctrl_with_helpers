@@ -27,28 +27,35 @@ blueprint:
   author: Jeffreyjelly
   input:
     light_target:
-      name: 💡 Light
-      description: '- Light or Light Group to Target'
+      name: Light
+      description: '### 💡
+
+      - Light or Light Group to Target'
       selector:
         entity:
           domain: light
     in_bool_auto_enable:
-      name: 🔛 input_boolean Enable
-      description: '- input_boolean helper for enabling and disabling this 
+      name:  Input_boolean_enable
+      description: '### 🔛
+      
+      - input_boolean helper for enabling and disabling this 
       automation'
       selector:
         entity:
           domain: input_boolean
     motion_detected_device:
-      name: 🕵️‍♂️ Motion Detection 🕵️‍♀️
-      description: '- A binary_sensor input that triggers the lights to turn 
+      name: Motion_detection 
+      description: '### 🕵️‍♂️🕵️‍♀️
+      
+      - A binary_sensor input that triggers the lights to turn 
       on.'
       selector:
         entity:
           domain: binary_sensor
     motion_not_detected_device:
-      name: 🕵️‍♀️⛔ Motion Not Detected ⛔🕵️‍♂️
-      description: '
+      name:  Motion_not_detected 
+      description: '### 🕵️‍♀️⛔ ⛔🕵️‍♂️
+
       - A binary_sensor that when triggered off starts the first motion to dim 
       timer.
 
@@ -59,15 +66,18 @@ blueprint:
         entity:
           domain: binary_sensor
     timer_on_to_dim:
-      name: ⏲🌕>🌓 Timer for motion stopped to dim
-      description: '- Timer used from no motion to dimmed state that is set via
+      name: Timer_for_motion_stopped_to_dim
+      description: '### ⏲🌕>🌓
+      
+      - Timer used from no motion to dimmed state that is set via
       the automation.'
       selector:
         entity:
           domain: timer
     timer_dim_to_off:
-      name: ⏲🌓>🌑 Timer for dimmed to off
-      description: '
+      name: Timer_for_dimmed_to_off
+      description: '### ⏲🌓>🌑
+
       - Timer used from dimmed to off state that is set via the automation.
       
       - Also used for time to recover last on state before reverting to scene 
@@ -77,8 +87,9 @@ blueprint:
         entity:
           domain: timer
     in_num_perc_dimmed:
-      name: 🌕>🌓%❔ Light dimming percentage
-      description: '
+      name: Light_dimming_percentage
+      description: '### 🌕>🌓%❔
+
       - input_number helper for choosing how much the lights dim
       
       - suggested range:
@@ -89,8 +100,9 @@ blueprint:
         entity:
           domain: input_number
     in_num_on_light_day:
-      name: ⛔🕵️‍♂️>🌓⏲🌞 No motion to dim in seconds (day)
-      description: '
+      name: No_motion_to_dim_in_seconds_day
+      description: '### ⛔🕵️‍♂️>🌓⏲🌞
+
       - input_number helper for no motion to dim to set the timer during the
       day in seconds.
 
@@ -104,8 +116,9 @@ blueprint:
         entity:
           domain: input_number
     in_num_on_light_night:
-      name: ⛔🕵️‍♂️>🌓⏲🌙 No motion to dim in seconds (night)
-      description: '
+      name: No_motion_to_dim_in_seconds_night
+      description: '### ⛔🕵️‍♂️>🌓⏲🌙
+
       - input_number helper for no motion to dim to set the timer during the
       night in seconds.
 
@@ -119,8 +132,9 @@ blueprint:
         entity:
           domain: input_number
     in_num_dim_light_day:
-      name: 🌓>🌑⏲🌞 Dimmed to off in seconds (day)
-      description: '
+      name: Dimmed_to_off_in_seconds_day
+      description: '### 🌓>🌑⏲🌞
+
       - input_number helper for dimmed to off to set the timer during the day
       in seconds.
 
@@ -134,8 +148,9 @@ blueprint:
         entity:
           domain: input_number
     in_num_dim_light_night:
-      name: 🌓>🌑⏲🌙 Dimmed to off in seconds (night)
-      description: '
+      name: Dimmed_to_off_in_seconds_night
+      description: '### 🌓>🌑⏲🌙
+      
       - input_number helper for dimmed to off to set the timer during the night
       in seconds.
 
@@ -150,8 +165,9 @@ blueprint:
           domain: input_number
     #input_number for transition time for light turning on
     in_num_transition_time:
-      name: 💡🆙⏳ Light on transition time normal
-      description: '
+      name: Light_on_transition_time_normal
+      description: '### 💡🆙⏳
+      
       - input_number helper for light transitioning on and off in seconds
       
       - suggested range:
@@ -162,8 +178,9 @@ blueprint:
         entity:
           domain: input_number
     in_num_transition_time_fast:
-      name: 💡🆙⏳⏩ Light on transition time fast
-      description: '
+      name: Light_on_transition_time_fast
+      description: '### 💡🆙⏳⏩
+
       - input_number helper for light transitioning to and from dimmed states
       in seconds. (you&rsquo;ll want this fast to see the transition)
       
@@ -175,35 +192,45 @@ blueprint:
         entity:
           domain: input_number
     in_datetime_day_time:
-      name: 📅⌚🌞 datetime start for day scene
-      description: '- input_datetime helper start time for activating the day 
+      name: Datetime_start_for_day_scene
+      description: '### 📅⌚🌞
+      
+      - input_datetime helper start time for activating the day 
       scene selected below.'
       selector:
         entity:
           domain: input_datetime
     in_datetime_night_time:
-      name: 📅⌚🌙 datetime start for night scene
-      description: '- input_datetime helper start time for activating the day 
+      name: Datetime_start_for_night_scene
+      description: '### 📅⌚🌙
+      
+      - input_datetime helper start time for activating the day 
       scene selected below.'
       selector:
         entity:
           domain: input_datetime
     scene_day_light:
-      name: 🌞🎨 Day scene
-      description: '- scene for the day setting.'
+      name: Day_scene
+      description: '### 🌞🎨
+      
+      - scene for the day setting.'
       selector:
         entity:
           domain: scene
     #scene setting for night
     scene_night_light:
-      name: 🌙🎨 Night scene for the lights.
-      description: '- scene for the night setting.'
+      name: Night_scene_for_the_lights.
+      description: '### 🌙🎨
+      
+      - scene for the night setting.'
       selector:
         entity:
           domain: scene
     temp_scene_name:
-      name: 🎨🎈 Temporary scene name
-      description: '- Temporary scene name that will be created to recover the
+      name: Temporary_scene_name
+      description: '### 🎨🎈
+      
+      - Temporary scene name that will be created to recover the
       last on state 
       
       > (make sure it&rsquo;s unique and doesn&rsquo;t already exist)
