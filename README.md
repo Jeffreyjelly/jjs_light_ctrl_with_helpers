@@ -37,19 +37,19 @@ blueprint
 
 ### input_numbers [ 7 ]:
  - in_num_perc_dimmed
-   - > (-99 to -1  percentage that your lights are dimmed by before turn off)
+   - > (-99 to -1 percentage that your lights are dimmed by before turn off, if it hit's 0 it'll turn back on to 1%)
  - in_num_`{name_of_area}`_on_light_day_dly
-   - > (0 to ?  time in seconds from no motion to dim during the day)
+   - > (20 to 7200 time in seconds from no motion to dim during the day)
  - in_num_`{name_of_area}`_on_light_night_dly
-   - > (0 to ?  time in seconds from no motion to dim during the night)
+   - > (20 to 7200 time in seconds from no motion to dim during the night)
  - in_num_`{name_of_area}`_dim_light_day_dly
-   - > (0 to ?  time in seconds from dim to off during the day)
+   - > (10 to 1800 time in seconds from dim to off during the day)
  - in_num_`{name_of_area}`_dim_light_night_dly
-   - > (0 to ?  time in seconds from dim to off during the night)
+   - > (10 to 1800 time in seconds from dim to off during the night)
  - in_num_transition_time_norm
-   - > (0 to ?(10)  time in seconds for light to transition from off to on)
+   - > (0 to 10)  time in seconds for light to transition from off to on)
  - in_num_transition_time_fast
-   - > (0 to ?(10)  time in seconds for light to transition from dim to on or vice versa)
+   - > (0 to 3)  time in seconds for light to transition from dim to on or vice versa)
 
 ### input_daytime [ 2 ]:
  - in_datetime_day
