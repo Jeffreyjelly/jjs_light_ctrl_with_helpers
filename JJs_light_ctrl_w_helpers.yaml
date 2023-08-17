@@ -207,10 +207,8 @@ blueprint:
       last on state 
       
       > (make sure it&rsquo;s unique and doesn&rsquo;t already exist)
-      
-      > (and also make sure it starts with &rsquo;scene.&rsquo;)
       '
-      default: "scene.jjs_recovery_scene_for_zone_"
+      default: "jjs_recovery_scene_for_zone_"
 
 variables:
   #   light_target_ent: !input "light_target"
@@ -329,7 +327,7 @@ action:
                             {{ states(in_num_transition_time_fast_ent) | int }}
                         target:
                           entity_id:
-                            - scene.{{states(temp_scene_name_ent)}}
+                            - "scene.{{states(temp_scene_name_ent)}}"
                       - service: timer.cancel
                         data: {}
                         target:
@@ -398,7 +396,7 @@ action:
                         int }}
                     target:
                       entity_id:
-                        - scene.{{states(temp_scene_name_ent)}}
+                        - "scene.{{states(temp_scene_name_ent)}}"
                   - service: timer.cancel
                     data: {}
                     target:
