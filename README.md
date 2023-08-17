@@ -5,13 +5,13 @@ Home Assistant Blueprint for controlling the lights with a daytime and nighttime
 
 ## Helpers, scenes, light groups, and more you'll need with suggested names
 
-### input_boolean [ 1 ]:
- - helper_`{name_of_area}`_auto_enable
-   - > (a boolean for you to disable the automation when needed)
-
 ### light or light Group [ 1 ]:
  - group_`{name_of_area}`_all
    - > (the light(s) to control)
+
+### input_boolean [ 1 ]:
+ - helper_`{name_of_area}`_auto_enable
+   - > (a boolean for you to disable the automation when needed)
 
 ### binary_sensor [ 2 ]:
  - motion detection
