@@ -20,7 +20,7 @@ blueprint
    - > (the light(s) to control)
 
 ### input_boolean [ 1 ]:
- - helper_`{name_of_area}`_auto_enable
+ - in_bool_`{name_of_area}`_auto_enable
    - > (a boolean for you to disable the automation when needed)
 
 ### binary_sensor [ 2 ]:
