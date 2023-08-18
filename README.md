@@ -64,5 +64,8 @@ blueprint
    - > (night scene that should be controlling the lights listed for your lights chosen above)
 
 
-## Ideas to add later
+## Ideas to add
+ - boolean to not save last on state for others to use this with other automations
  - another input_number for controlling the length of time it preserves the temporary scene instead of just copying the `in_num_{name_of_area}_dim_light_{day}_dly`.
+ - adding code for packages for people to make the helpers easier
+ - adding a card for the dashboards
