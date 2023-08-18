@@ -216,7 +216,6 @@ blueprint:
       selector:
         entity:
           domain: scene
-    #scene setting for night
     scene_night_light:
       name: Night_scene_for_the_lights.
       description: '### 🌙🎨
