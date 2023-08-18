@@ -30,7 +30,7 @@ blueprint
    - > (PIR sensor, mmwave or any other means)
 
 ### timer [ 2 ]:
- - timer_`{name_of_area}`_motion_to_dim
+ - timer_`{name_of_area}`_on_to_dim
    - > (keep at default 0 as the automation uses this as a control from no motion to dim)
  - timer_`{name_of_area}`_dim_to_off
    - > (keep at default 0 as the automation uses this as a control from dim to off)
