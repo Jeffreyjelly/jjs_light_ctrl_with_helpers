@@ -69,3 +69,7 @@ blueprint
  - another input_number for controlling the length of time it preserves the temporary scene instead of just copying the `in_num_{name_of_area}_dim_light_{day}_dly`.
  - adding code for packages for people to make the helpers easier
  - adding a card for the dashboards
+
+## Known problems
+ - when dimming the lights and they fall below 0 I set the group to turn on at 1% and it turns on unwanted lights against the nightlight scene
+   - need to calculate the dim percent and just set it to 1 instead of checking if the lights turned off after dimming
