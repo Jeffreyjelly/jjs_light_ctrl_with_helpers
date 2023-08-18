@@ -163,7 +163,6 @@ blueprint:
       selector:
         entity:
           domain: input_number
-    #input_number for transition time for light turning on
     in_num_transition_time:
       name: Light_on_transition_time_normal
       description: '### 💡🆙⏳
