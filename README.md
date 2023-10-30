@@ -69,7 +69,13 @@ blueprint
  - another input_number for controlling the length of time it preserves the temporary scene instead of just copying the `in_num_{name_of_area}_dim_light_{day}_dly`.
  - adding code for packages for people to make the helpers easier
  - adding a card for the dashboards
+   - add a section to the card for the timers to show when last ran etc.
+ - add the ability to add a list of other blueprint timers you'd reset
+   - can you reference the timer used underneath a blueprint?
+   - for instance if your office is in the second half of your living room you dont want the living room to turn off
 
 ## Known problems
  - when dimming the lights and they fall below 0 I set the group to turn on at 1% and it turns on unwanted lights against the nightlight scene
    - need to calculate the dim percent and just set it to 1 instead of checking if the lights turned off after dimming
+ - When the lights are turned off manually and the timer for `motion to dim` is still active the lights wont turn back on.
+   - this needs a major fix as that is a rather broken feature that won't fly for me. change the beginning check for the three (two timers and lights on) to just only check light by itself first. If lights were off clear out the dim to off timer and continue normal operation.
