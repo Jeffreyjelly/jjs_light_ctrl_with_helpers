@@ -79,6 +79,4 @@ blueprint
 ## Known problems
  - when dimming the lights and they fall below 0 I set the group to turn on at 1% and it turns on unwanted lights against the nightlight scene
    - need to calculate the dim percent and just set it to 1 instead of checking if the lights turned off after dimming
- - When the lights are turned off manually and the timer for `motion to dim` is still active the lights wont turn back on.
-   - this needs a major fix as that is a rather broken feature that won't fly for me. change the beginning check for the three (two timers and lights on) to just only check light by itself first. If lights were off clear out the dim to off timer and continue normal operation.
-   - instead just write a branch trigger that adjusts the timer if the lights are changed not from this automation. (if the lights are manually turned off to cancel and existing timers)
+ - ~~When the lights are turned off manually and the timer for `motion to dim` is still active the lights wont turn back on.~~
