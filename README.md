@@ -64,17 +64,20 @@ blueprint
    - > (night scene that should be controlling the lights listed for your lights chosen above)
 
 
-## Ideas to add
+## Ideas to add / Things to test
  - boolean to not save last on state for others to use this with other automations
  - another input_number for controlling the length of time it preserves the temporary scene instead of just copying the `in_num_{name_of_area}_dim_light_{day}_dly`.
  - adding code for packages for people to make the helpers easier
+   - Also to add a snipped of the automation instantiation with all the helpers filled in to make this super easy to add new rooms.  
  - adding a card for the dashboards
    - add a section to the card for the timers to show when last ran etc.
+   - This will be a package that you have to rename to add each room you'd want to add as a condition.
  - add the ability to add a list of other blueprint timers you'd reset
    - can you reference the timer used underneath a blueprint?
    - for instance if your office is in the second half of your living room you dont want the living room to turn off
  - ability to change the day and night scenes used from a drop down list or something.
- - choice from user to reset the timers if lights were manually changed (off should still just always kill the timers though for problem seen below)
+ - ~~choice from user to reset the timers if lights were manually changed (off should still just always kill the timers though for problem seen below)~~ Set the automation to cancel the two timers if manually turned off.
+ - Need to verilfy using other sensors for turn on/turn off like door and window binary sensors.
 
 ## Known problems
  - when dimming the lights and they fall below 0 I set the group to turn on at 1% and it turns on unwanted lights against the nightlight scene
