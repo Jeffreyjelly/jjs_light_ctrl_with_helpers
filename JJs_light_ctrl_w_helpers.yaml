@@ -206,8 +206,7 @@ blueprint:
       default: jjs_recovery_scene_for_zone_
     in_num_hold_scene:
       name: Time to hold temporary scene
-      description:
-        "### \U0001F4A1\U0001F199⏳⏩\n- input_number helper to adjust for how
+      description: "### ⌚🎨🎈\n- input_number helper to adjust for how
         long to hold the temporary scene that is saved in seconds.\n- suggested
         range:\n> (1800s for 30 minutes) "
       selector:
