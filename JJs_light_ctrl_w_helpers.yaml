@@ -55,9 +55,9 @@ blueprint:
       name: Motion not detected
       description:
         "### \U0001F575️‍♀️⛔ ⛔\U0001F575️‍♂️\n- A binary_sensor that when
-        triggered off starts the first motion to dim timer.\n- Also will only work
-        to keep lights on if either of the two timers are active when this gets turned
-        to on again. "
+        triggered off starts the first motion to dim timer.\n- Also will only
+        work to keep lights on if either of the two timers are active when this
+        gets turned to on again. "
       selector:
         entity:
           domain:
@@ -77,8 +77,8 @@ blueprint:
       name: Timer for dimmed to off
       description:
         "### ⏲\U0001F313>\U0001F311\n- Timer used from dimmed to off state
-        that is set via the automation.\n- Also used for time to recover last on state
-        before reverting to scene on the next turn on. "
+        that is set via the automation.\n- Also used for time to recover last
+        on state before reverting to scene on the next turn on. "
       selector:
         entity:
           domain:
@@ -98,8 +98,9 @@ blueprint:
       name: No motion to dim in seconds day
       description:
         "### ⛔\U0001F575️‍♂️>\U0001F313⏲\U0001F31E\n- input_number helper
-        for no motion to dim to set the timer during the day in seconds.\n- suggested
-        range:\n> (20s to 7200s)\n> or otherwise 20 seconds to 2 hours "
+        for no motion to dim to set the timer during the day in seconds.\n-
+        suggested range:\n> (20s to 7200s)\n> or otherwise 20 seconds to 2
+        hours "
       selector:
         entity:
           domain:
@@ -109,8 +110,9 @@ blueprint:
       name: No motion to dim in seconds night
       description:
         "### ⛔\U0001F575️‍♂️>\U0001F313⏲\U0001F319\n- input_number helper
-        for no motion to dim to set the timer during the night in seconds.\n- suggested
-        range:\n> (20s to 7200s)\n> or otherwise 20 seconds to 2 hours "
+        for no motion to dim to set the timer during the night in seconds.\n-
+        suggested range:\n> (20s to 7200s)\n> or otherwise 20 seconds to 2
+        hours "
       selector:
         entity:
           domain:
@@ -120,8 +122,8 @@ blueprint:
       name: Dimmed to off in seconds day
       description:
         "### \U0001F313>\U0001F311⏲\U0001F31E\n- input_number helper for
-        dimmed to off to set the timer during the day in seconds.\n- suggested range:\n>
-        (10s to 1800s)\n> or otherwise 10 seconds to 30 minutes "
+        dimmed to off to set the timer during the day in seconds.\n- suggested
+        range:\n> (10s to 1800s)\n> or otherwise 10 seconds to 30 minutes "
       selector:
         entity:
           domain:
@@ -131,8 +133,9 @@ blueprint:
       name: Dimmed to off in seconds night
       description:
         "### \U0001F313>\U0001F311⏲\U0001F319\n- input_number helper for
-        dimmed to off to set the timer during the night in seconds.\n- suggested range:\n>
-        (10s to 1800s)\n> or otherwise 10 seconds to 30 minutes "
+        dimmed to off to set the timer during the night in seconds.\n-
+        suggested range:\n> (10s to 1800s)\n> or otherwise 10 seconds to 30
+        minutes "
       selector:
         entity:
           domain:
@@ -140,9 +143,8 @@ blueprint:
           multiple: false
     in_num_transition_time:
       name: Light on transition time normal
-      description:
-        "### \U0001F4A1\U0001F199⏳\n- input_number helper for light transitioning
-        on and off in seconds\n- suggested range:\n> (1s to 10s) "
+      description: "### \U0001F4A1\U0001F199⏳\n- input_number helper for light
+        transitioning on and off in seconds\n- suggested range:\n> (1s to 10s) "
       selector:
         entity:
           domain:
@@ -151,9 +153,9 @@ blueprint:
     in_num_transition_time_fast:
       name: Light on transition time fast
       description:
-        "### \U0001F4A1\U0001F199⏳⏩\n- input_number helper for light transitioning
-        to and from dimmed states in seconds. (you&rsquo;ll want this fast to see
-        the transition)\n- suggested range:\n> (1s to 3s) "
+        "### \U0001F4A1\U0001F199⏳⏩\n- input_number helper for light
+        transitioning to and from dimmed states in seconds. (you&rsquo;ll want
+        this fast to see the transition)\n- suggested range:\n> (1s to 3s) "
       selector:
         entity:
           domain:
@@ -199,9 +201,20 @@ blueprint:
       name: Temporary scene name
       description:
         "### \U0001F3A8\U0001F388\n- Temporary scene name that will be
-        created to recover the last on state\n> (make sure it&rsquo;s unique and doesn&rsquo;t
-        already exist) "
+        created to recover the last on state\n> (make sure it&rsquo;s unique
+        and doesn&rsquo;t already exist) "
       default: jjs_recovery_scene_for_zone_
+    in_num_hold_scene:
+      name: Time to hold temporary scene
+      description:
+        "### \U0001F4A1\U0001F199⏳⏩\n- input_number helper to adjust for how
+        long to hold the temporary scene that is saved in seconds.\n- suggested
+        range:\n> (1800s for 30 minutes) "
+      selector:
+        entity:
+          domain:
+            - input_number
+          multiple: false
 variables:
   light_target_ent: !input light_target
   in_num_dim_amt_ent: !input in_num_dim_amt
@@ -212,6 +225,7 @@ variables:
   in_num_transition_time_ent: !input in_num_transition_time
   in_num_transition_time_fast_ent: !input in_num_transition_time_fast
   temp_scene_name_ent: !input temp_scene_name
+  in_num_hold_scene_ent: !input in_num_hold_scene
 alias: JJs light ctrl with helpers
 description: ""
 trigger:
@@ -225,7 +239,7 @@ trigger:
     entity_id: !input motion_not_detected_device
     to: "off"
     id: motion_stopped
-    alias: motion_not_detected_device  > motion_stopped
+    alias: motion_not_detected_device > motion_stopped
   - platform: state
     entity_id: !input motion_not_detected_device
     to: "on"
@@ -520,7 +534,7 @@ action:
                       - service: timer.start
                         data:
                           duration:
-                            "{{ (states(in_num_dim_light_day_ent)|int)|timestamp_custom('%H:%M:%S',
+                            "{{ (states(in_num_hold_scene_ent)|int)|timestamp_custom('%H:%M:%S',
                             false) }}"
                         target:
                           entity_id: !input timer_dim_to_off
@@ -534,7 +548,7 @@ action:
                           - service: timer.start
                             data:
                               duration:
-                                "{{ (states(in_num_dim_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
+                                "{{ (states(in_num_hold_scene_ent)|int)|timestamp_custom('%H:%M:%S',
                                 false) }}"
                             target:
                               entity_id: !input timer_dim_to_off
