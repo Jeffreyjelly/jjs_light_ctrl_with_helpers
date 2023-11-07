@@ -66,12 +66,12 @@ blueprint
 
 ## Ideas to add / Things to test
  - boolean to not save last on state for others to use this with other automations
- - another input_number for controlling the length of time it preserves the temporary scene instead of just copying the `in_num_{name_of_area}_dim_light_{day}_dly`.
+ - ~~another input_number for controlling the length of time it preserves the temporary scene instead of just copying the `in_num_{name_of_area}_dim_light_{day}_dly`.~~ - done
  - adding code for packages for people to make the helpers easier
    - Also to add a snipped of the automation instantiation with all the helpers filled in to make this super easy to add new rooms.  
- - adding a card for the dashboards
-   - add a section to the card for the timers to show when last ran etc.
-   - This will be a package that you have to rename to add each room you'd want to add as a condition.
+ - ~~adding a card for the dashboards~~ -done
+   - ~~add a section to the card for the timers to show when last ran etc.~~ - just did a tile for the timer if active for now
+   - ~~This will be a package that you have to rename to add each room you'd want to add as a condition.~~ adding a package for the individual rooms or all together.
  - add the ability to add a list of other blueprint timers you'd reset
    - can you reference the timer used underneath a blueprint?
    - for instance if your office is in the second half of your living room you dont want the living room to turn off
@@ -80,6 +80,14 @@ blueprint
  - Need to verilfy using other sensors for turn on/turn off like door and window binary sensors.
 
 ## Known problems
- - when dimming the lights and they fall below 0 I set the group to turn on at 1% and it turns on unwanted lights against the nightlight scene
-   - need to calculate the dim percent and just set it to 1 instead of checking if the lights turned off after dimming
+ - ~~when dimming the lights and they fall below 0 I set the group to turn on at 1% and it turns on unwanted lights against the nightlight scene~~
+   - ~~need to calculate the dim percent and just set it to 1 instead of checking if the lights turned off after dimming~~ - done
+   - have a problem with this still for lights that are on switches get turned on when they were set to be off for certain scenes. Need to ask forums on ideas for this.
  - ~~When the lights are turned off manually and the timer for `motion to dim` is still active the lights wont turn back on.~~
+ - still seems to be problem when the lights are getting stuck at the dim value but I haven't figured out what path is causing it yet.
+
+## Revision history
+ - 1.1 - 2023_11_06
+   - added input_number for the time the automation holds onto the temporary scene so your lights stay to the old value for however long you want to specifiy.
+   - added a package for a room to be added easily
+   - adding the main config_jj_light_helper.yaml package also for all the other standalone helpers
