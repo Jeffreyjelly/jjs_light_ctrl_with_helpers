@@ -1,6 +1,8 @@
 # jjs_light_ctrl_with_helpers
 Home Assistant Blueprint for controlling the lights with a daytime and nighttime scenes via timer helpers and more
 
+The only piece you need to provide is a light group and a binary sensor for motion! (packages used to instantiate helpers per the room you want to set this up for)
+
 ## Features:
 - Two light scenes, one for day and night
 - Wont override the current light state if manually changed
