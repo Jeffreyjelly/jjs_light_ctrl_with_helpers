@@ -32,14 +32,14 @@ blueprint
    - > (PIR sensor, mmwave or any other means)
 
 ### timer [ 2 ]:
- - timer_`{name_of_area}`_on_to_dim
+ - timer_`{name_of_area}`_motion_to_dim
    - > (keep at default 0 as the automation uses this as a control from no motion to dim)
  - timer_`{name_of_area}`_dim_to_off
    - > (keep at default 0 as the automation uses this as a control from dim to off)
 
 ### input_numbers [ 8 ]:
- - in_num_perc_dimmed
-   - > (-99 to -1 percentage that your lights are dimmed by before turn off, if it hit's 0 it'll turn back on to 1%)
+ - in_num_dim_amt
+   - > (0 to 255 value that your lights are dimmed by before turn off, or otherwise current brightness-in_num_dim_amt. If the current brightness is below this value, the value will be set to 1 instead of 0 during the dim period)
  - in_num_`{name_of_area}`_on_light_day_dly
    - > (20 to 7200 time in seconds from no motion to dim during the day)
  - in_num_`{name_of_area}`_on_light_night_dly
@@ -60,6 +60,12 @@ blueprint
    - > (Whenever you want the lights to start to use the day scene)
  - in_datetime_night
    - > (Whenever you want the lights to start to use the night scene)
+
+### input_select [ 2 ]:
+ - in_select_light_control_card
+   - > (List of settings and rooms to control the card that is in the package for config_jj_light_helper.yaml)
+ - in_select_light_settings_card
+   - > (When under a room this controls what the room is displaying for configuration, light, settings for day, or night)
 
 ### scenes [ 2 ]:
  - scene_`{name_of_area}`_daytime
