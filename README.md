@@ -37,7 +37,7 @@ blueprint
  - timer_`{name_of_area}`_dim_to_off
    - > (keep at default 0 as the automation uses this as a control from dim to off)
 
-### input_numbers [ 7 ]:
+### input_numbers [ 8 ]:
  - in_num_perc_dimmed
    - > (-99 to -1 percentage that your lights are dimmed by before turn off, if it hit's 0 it'll turn back on to 1%)
  - in_num_`{name_of_area}`_on_light_day_dly
@@ -52,6 +52,8 @@ blueprint
    - > (0 to 10)  time in seconds for light to transition from off to on)
  - in_num_transition_time_fast
    - > (0 to 3)  time in seconds for light to transition from dim to on or vice versa)
+ - in_num_`{name_of_area}`_hold_scene
+   - > (1 to 7200) time in seconds for automation to hold onto the temporary scene
 
 ### input_daytime [ 2 ]:
  - in_datetime_day
