@@ -65,7 +65,7 @@ blueprint
  - in_select_light_control_card
    - > (List of settings and rooms to control the card that is in the package for config_jj_light_helper.yaml)
  - in_select_light_settings_card
-   - > (When under a room this controls what the room is displaying for configuration, light, settings for day, or night)
+   - > (When under a room for the card yaml example this controls what the room is displaying for configuration, light, settings for day, or night)
 
 ### scenes [ 2 ]:
  - scene_`{name_of_area}`_daytime
