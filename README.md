@@ -94,7 +94,7 @@ blueprint
    - ~~need to calculate the dim percent and just set it to 1 instead of checking if the lights turned off after dimming~~ - done
    - have a problem with this still for lights that are on switches get turned on when they were set to be off for certain scenes. Need to ask forums on ideas for this.
  - ~~When the lights are turned off manually and the timer for `motion to dim` is still active the lights wont turn back on.~~
- - still seems to be problem when the lights are getting stuck at the dim value but I haven't figured out what path is causing it yet.
+ - still seems to be problem when the lights are getting stuck at the dim value but I haven't figured out what path is causing it yet. (happens very rarely at this point but might be something happening right after dimming)
 
 ## Revision history
  - 1.1 - 2023_11_06
