@@ -1,5 +1,5 @@
 blueprint:
-  name: "⚡\U0001F4A1 JJs Light Control With Helpers v1.1 \U0001F4A1⚡"
+  name: "⚡\U0001F4A1 JJs Light Control With Helpers v1.2 \U0001F4A1⚡"
   description: " ## Light control automation that has:
 
     - Two light scenes, one for day and night
@@ -21,6 +21,7 @@ blueprint:
     - Please see the [readme.md](https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/README.md) "
   domain: automation
   source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/blueprints/JJs_light_ctrl_w_helpers/JJs_light_ctrl_w_helpers.yaml
+  version: '1.2.0'
   author: Jeffreyjelly
   input:
     light_target:
