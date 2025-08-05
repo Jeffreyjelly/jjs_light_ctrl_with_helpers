@@ -51,27 +51,35 @@ input_datetime:
 
 #input select for the card on the overview
 input_select:
-  in_select_light_control_card:
+  inputselect_light_control_selection_card:
     name: Light Control Selection Card
     options:
-      - roomexample1
-      - roomexample2
-      - All Light Cntrl
-      - Transition Time Values
-      - Timestamp Settings
-      - Automation Booleans
-      - Dim Amount Values
-    initial: All Light Cntrl
+      - all_light_controller
+      - transition_time_values
+      - timestamp_settings
+      - automation_boolean
+      - dim_amount_values
+      - backhallway
+      - smalltvroom
+      - livingroom
+      - office
+      - downstairsbathroom
+      - laundry
+      - kitchen
+      - masterbedroom
+      - basemententry
+      - basementutility
+    initial: all_light_controller
     icon: mdi:window-shutter-settings
-    #input select for the card on the overview
-  in_select_light_settings_card:
+  #input select for the card on the overview
+  inputselect_light_settings_card:
     name: in select light settings card
     options:
-      - Lights
-      - On to dim values
-      - Dim to off values
-    initial: Lights
-    icon: mdi:window-shutter-settings
+      - lights
+      - on_to_dim_value
+      - dim_to_off_value
+    initial: lights
+    icon: mdi:window-shutter-cog
 ##
 ## card for all rooms example with roomexample1 and roomexample2
 ##   (replace roomexample1 and 2 with names of created rooms)
