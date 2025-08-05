@@ -425,11 +425,11 @@ action:
                       snapshot_entities: !input light_target
                       scene_id: !input temp_scene_name
                     enabled: true
-                  - delay:
-                      hours: 0
-                      minutes: 0
-                      seconds: 0
-                      milliseconds: 10
+                  # - delay:
+                  #     hours: 0
+                  #     minutes: 0
+                  #     seconds: 0
+                  #     milliseconds: 10
                   - if:
                       - condition: template
                         value_template: |-
