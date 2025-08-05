@@ -139,8 +139,9 @@ scene:
       light.group_roomexample_all:
         state: "on"
         brightness: 145
-        kelvin: 2237
-    id: scene_roomexample_day
+        color_temp_kelvin: 2237
+        color_temp: 447
+    id: scene_roomexample_relax
 
   #same values for the philips hue for "Read" scene
   - name: roomexample Read
@@ -149,8 +150,9 @@ scene:
       light.group_roomexample_all:
         state: "on"
         brightness: 255
-        kelvin: 2890
-    id: scene_roomexample_day
+        color_temp_kelvin: 2890
+        color_temp: 346
+    id: scene_roomexample_read
 
   #same values for the philips hue for "Energize" scene
   - name: roomexample Energize
@@ -159,8 +161,9 @@ scene:
       light.group_roomexample_all:
         state: "on"
         brightness: 255
-        kelvin: 6410
-    id: scene_roomexample_day
+        color_temp_kelvin: 6410
+        color_temp: 156
+    id: scene_roomexample_energize
 
   #same values for the philips hue for "Concentrate" scene
   - name: roomexample Concentrate
@@ -169,8 +172,9 @@ scene:
       light.group_roomexample_all:
         state: "on"
         brightness: 255
-        kelvin: 4291
-    id: scene_roomexample_day
+        color_temp_kelvin: 4291
+        color_temp: 233
+    id: scene_roomexample_concentrate
 
   #nightlight with red only color
   - name: roomexample Nightlight
@@ -178,11 +182,9 @@ scene:
     entities:
       light.group_roomexample_all:
         state: "on"
-        brightness: 51
-        rgb_color:
-          - 255
-          - 0
-          - 0
+        brightness: 75
+        color_temp_kelvin: 2237
+        color_temp: 447
     id: scene_roomexample_nightlight
 ##
 ##EXAMPLE YAML FOR AUTOMATION
