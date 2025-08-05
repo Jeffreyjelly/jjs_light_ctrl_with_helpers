@@ -20,7 +20,7 @@ blueprint:
 
     - Please see the [readme.md](https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/README.md) "
   domain: automation
-  source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/JJs_light_ctrl_w_helpers.yaml
+  source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/blueprints/JJs_light_ctrl_w_helpers/JJs_light_ctrl_w_helpers.yaml
   author: Jeffreyjelly
   input:
     light_target:
