@@ -1,44 +1,35 @@
 blueprint:
   name: "⚡\U0001F4A1 JJs Light Control With Helpers \U0001F4A1⚡"
-  description: >
-    # JJs Light Control With Helpers
-    
-    **Version: 1.3**
-    
-    
-    ## Light control automation that has:
-
-    - Two light scenes, one for day and night
-
-    - Wont override the current light state if manually changed
-
-    - Dims to show the lights are about to turn off
-
+  description: "# JJs Light Control With Helpers\n
+    **Version: 1.3.8**\n
+    ## Light control automation that has:\n
+    - Two light scenes, one for day and night\n
+    - Wont override the current light state if manually changed\n
+    - Dims to show the lights are about to turn off\n
     - Time period after lights are off and motion is active to recover the last light
-    state.
-
-    - Fully customizable with the helpers
-
-    - Controllable via other automations via using the helpers called with the blueprint
-
-
-    ### Required helpers list
-
-    - Please see the [readme.md](https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/README.md) "
+    state.\n
+    - Fully customizable with the helpers\n
+    - Controllable via other automations via using the helpers called with the blueprint\n
+    ### Required helpers list\n
+    Required = *\n
+    - Please see the [readme.md](https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/README.md)\n"
   domain: automation
-  source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/blueprints/JJs_light_ctrl_w_helpers/JJs_light_ctrl_w_helpers.yaml
+  author: Jeffreyjelly
+  homeassistant:
+    min_version: '2024.6.0'
   input:
     light_settings:
+      collapsed: true
       name: Lights Targeted and Scenes *
       icon: mdi:lightbulb-auto
       description: 'lights affected by this automation and the scenes to support those lights
-      
+
         '
-      collapsed: true
       input:
         light_target:
           name: Light
           description: "### \U0001F4A1\n- Light or Light Group to Target"
+          default: []
           selector:
             entity:
               domain:
@@ -47,6 +38,7 @@ blueprint:
         scene_day_light:
           name: Day scene
           description: "### \U0001F31E\U0001F3A8\n- scene for the day setting."
+          default: []
           selector:
             entity:
               domain:
@@ -55,24 +47,26 @@ blueprint:
         scene_night_light:
           name: Night scene for the lights.
           description: "### \U0001F319\U0001F3A8\n- scene for the night setting."
+          default: []
           selector:
             entity:
               domain:
                 - scene
               multiple: false
     trigger_settings:
+      collapsed: true
       name: Triggers for on an off *
       icon: mdi:motion-sensor
       description: 'Motion devices used to trigger and to sense motion is gone.
-      
+
         '
-      collapsed: true
       input:
         motion_detected_device:
           name: Motion detection
           description:
             "### \U0001F575️‍♂️\U0001F575️‍♀️\n- A binary_sensor input that
             triggers the lights to turn on."
+          default: []
           selector:
             entity:
               domain:
@@ -85,24 +79,26 @@ blueprint:
             triggered off starts the first motion to dim timer.\n- Also will only
             work to keep lights on if either of the two timers are active when this
             gets turned to on again. "
+          default: []
           selector:
             entity:
               domain:
                 - binary_sensor
               multiple: false
     timer_settings:
+      collapsed: true
       name: timers for the automation to run *
       icon: mdi:timer-edit
       description: 'Input helper timers for the automation to run.
-      
+
         '
-      collapsed: true
       input:
         timer_on_to_dim:
           name: Timer for motion stopped to dim
           description:
             "### ⏲\U0001F315>\U0001F313\n- Timer used from no motion to dimmed
             state that is set via the automation."
+          default: []
           selector:
             entity:
               domain:
@@ -114,24 +110,26 @@ blueprint:
             "### ⏲\U0001F313>\U0001F311\n- Timer used from dimmed to off state
             that is set via the automation.\n- Also used for time to recover last
             on state before reverting to scene on the next turn on. "
+          default: []
           selector:
             entity:
               domain:
                 - timer
               multiple: false
     number_settings:
+      collapsed: true
       name: Input number settings *
       icon: mdi:numeric
       description: 'Input numbers the automation settings.
-      
+
         '
-      collapsed: true
       input:
         in_num_dim_amt:
           name: Light dimming value
           description:
             "### \U0001F315>\U0001F313%❔\n- input_number helper for choosing
             how much the lights dim\n- suggested range:\n> (0 to 255) "
+          default: []
           selector:
             entity:
               domain:
@@ -144,6 +142,7 @@ blueprint:
             for no motion to dim to set the timer during the day in seconds.\n-
             suggested range:\n> (20s to 7200s)\n> or otherwise 20 seconds to 2
             hours "
+          default: []
           selector:
             entity:
               domain:
@@ -156,6 +155,7 @@ blueprint:
             for no motion to dim to set the timer during the night in seconds.\n-
             suggested range:\n> (20s to 7200s)\n> or otherwise 20 seconds to 2
             hours "
+          default: []
           selector:
             entity:
               domain:
@@ -167,6 +167,7 @@ blueprint:
             "### \U0001F313>\U0001F311⏲\U0001F31E\n- input_number helper for
             dimmed to off to set the timer during the day in seconds.\n- suggested
             range:\n> (10s to 1800s)\n> or otherwise 10 seconds to 30 minutes "
+          default: []
           selector:
             entity:
               domain:
@@ -179,6 +180,7 @@ blueprint:
             dimmed to off to set the timer during the night in seconds.\n-
             suggested range:\n> (10s to 1800s)\n> or otherwise 10 seconds to 30
             minutes "
+          default: []
           selector:
             entity:
               domain:
@@ -188,6 +190,7 @@ blueprint:
           name: Light on transition time normal
           description: "### \U0001F4A1\U0001F199⏳\n- input_number helper for light
             transitioning on and off in seconds\n- suggested range:\n> (1s to 10s) "
+          default: []
           selector:
             entity:
               domain:
@@ -199,6 +202,7 @@ blueprint:
             "### \U0001F4A1\U0001F199⏳⏩\n- input_number helper for light
             transitioning to and from dimmed states in seconds. (you&rsquo;ll want
             this fast to see the transition)\n- suggested range:\n> (1s to 3s) "
+          default: []
           selector:
             entity:
               domain:
@@ -209,24 +213,26 @@ blueprint:
           description: "### ⌚🎨🎈\n- input_number helper to adjust for how
             long to hold the temporary scene that is saved in seconds.\n- suggested
             range:\n> (1800s for 30 minutes) "
+          default: []
           selector:
             entity:
               domain:
                 - input_number
               multiple: false
     datetime_settings:
+      collapsed: true
       name: datetime settings *
       icon: mdi:clipboard-text-clock-outline
       description: 'datetime settings.
-      
+
         '
-      collapsed: true
       input:
         in_datetime_day_time:
           name: Datetime start for day scene
           description:
             "### \U0001F4C5⌚\U0001F31E\n- input_datetime helper start time
             for activating the day scene selected below."
+          default: []
           selector:
             entity:
               domain:
@@ -237,6 +243,7 @@ blueprint:
           description:
             "### \U0001F4C5⌚\U0001F319\n- input_datetime helper start time
             for activating the day scene selected below."
+          default: []
           selector:
             entity:
               domain:
@@ -246,7 +253,7 @@ blueprint:
       name: Automation logic settings *
       icon: mdi:toggle-switch
       description: 'Automation boolean settings.
-      
+
         '
       collapsed: true
       input:
@@ -255,11 +262,15 @@ blueprint:
           description:
             "### \U0001F51B\n- input_boolean helper for enabling and disabling
             this automation"
+          default: []
           selector:
             entity:
               domain:
                 - input_boolean
               multiple: false
+  source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/blueprints/JJs_light_ctrl_w_helpers/JJs_light_ctrl_w_helpers.yaml
+mode: restart
+max_exceeded: silent
 variables:
   light_target_ent: !input light_target
   in_num_dim_amt_ent: !input in_num_dim_amt
@@ -273,8 +284,7 @@ variables:
   temp_scene_name_ent: >-
     jjs_recovery_scene_for_zone_{{ this.entity_id.split('.')[-1] }}
   in_num_hold_scene_ent: !input in_num_hold_scene
-alias: JJs light ctrl with helpers
-description: ""
+# alias: JJs light ctrl with helpers
 trigger:
   - platform: state
     entity_id: !input motion_detected_device
@@ -616,4 +626,3 @@ action:
                     - !input timer_on_to_dim
                     - !input timer_dim_to_off
     alias: if boolean for automation enable is on
-mode: single
