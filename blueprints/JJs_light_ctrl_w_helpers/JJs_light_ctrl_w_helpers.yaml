@@ -1,7 +1,7 @@
 blueprint:
   name: "⚡\U0001F4A1 JJs Light Control With Helpers \U0001F4A1⚡"
   description: "# JJs Light Control With Helpers\n
-    **Version: 1.3.8**\n
+    **Version: 1.3.9**\n
     ## Light control automation that has:\n
     - Two light scenes, one for day and night\n
     - Wont override the current light state if manually changed\n
@@ -16,7 +16,7 @@ blueprint:
   domain: automation
   author: Jeffreyjelly
   homeassistant:
-    min_version: '2024.6.0'
+    min_version: '2025.1.0'
   input:
     light_settings:
       collapsed: true
@@ -118,14 +118,14 @@ blueprint:
               multiple: false
     number_settings:
       collapsed: true
-      name: Input number settings *
+      name: Input number settings
       icon: mdi:numeric
       description: 'Input numbers the automation settings.
 
         '
       input:
         in_num_dim_amt:
-          name: Light dimming value
+          name: Light dimming value (optional input_number helper)
           description:
             "### \U0001F315>\U0001F313%❔\n- input_number helper for choosing
             how much the lights dim\n- suggested range:\n> (0 to 255) "
@@ -135,8 +135,19 @@ blueprint:
               domain:
                 - input_number
               multiple: false
+        in_num_dim_amt_constant:
+          name: Light dimming value (used if no helper listed)
+          description:
+            "### \U0001F315>\U0001F313%❔\n- Number for choosing
+            how much the lights dim\n- range:\n> (0 to 255) "
+          default: 128
+          selector:
+            number:
+              min: 0
+              max: 255
+              step: 1
         in_num_on_light_day:
-          name: No motion to dim in seconds day
+          name: No motion to dim in seconds day (optional input_number helper)
           description:
             "### ⛔\U0001F575️‍♂️>\U0001F313⏲\U0001F31E\n- input_number helper
             for no motion to dim to set the timer during the day in seconds.\n-
@@ -148,8 +159,21 @@ blueprint:
               domain:
                 - input_number
               multiple: false
+        in_num_on_light_day_constant:
+          name: No motion to dim in seconds day (used if no helper listed)
+          description:
+            "### ⛔\U0001F575️‍♂️>\U0001F313⏲\U0001F31E\n- Number 
+            for no motion to dim to set the timer during the day in seconds.\n-
+            Range:\n> (20s to 7200s)\n> or otherwise 20 seconds to 2
+            hours "
+          default: 900
+          selector:
+            number:
+              min: 20
+              max: 7200
+              step: 1
         in_num_on_light_night:
-          name: No motion to dim in seconds night
+          name: No motion to dim in seconds night (optional input_number helper)
           description:
             "### ⛔\U0001F575️‍♂️>\U0001F313⏲\U0001F319\n- input_number helper
             for no motion to dim to set the timer during the night in seconds.\n-
@@ -161,8 +185,20 @@ blueprint:
               domain:
                 - input_number
               multiple: false
+        in_num_on_light_night_constant:
+          name: No motion to dim in seconds night (used if no helper listed)
+          description:
+            "### ⛔\U0001F575️‍♂️>\U0001F313⏲\U0001F319\n- Number
+            for no motion to dim to set the timer during the night in seconds.\n-
+            Range:\n> (20s to 7200s)\n> or otherwise 20 seconds to 2 hours "
+          default: 300
+          selector:
+            number:
+              min: 20
+              max: 7200
+              step: 1
         in_num_dim_light_day:
-          name: Dimmed to off in seconds day
+          name: Dimmed to off in seconds day (optional input_number helper)
           description:
             "### \U0001F313>\U0001F311⏲\U0001F31E\n- input_number helper for
             dimmed to off to set the timer during the day in seconds.\n- suggested
@@ -173,8 +209,20 @@ blueprint:
               domain:
                 - input_number
               multiple: false
+        in_num_dim_light_day_constant:
+          name: Dimmed to off in seconds day (used if no helper listed)
+          description:
+            "### \U0001F313>\U0001F311⏲\U0001F31E\n- Number for
+            dimmed to off to set the timer during the day in seconds.\n- 
+            Range:\n> (10s to 1800s)\n> or otherwise 10 seconds to 30 minutes "
+          default: 300
+          selector:
+            number:
+              min: 10
+              max: 1800
+              step: 1
         in_num_dim_light_night:
-          name: Dimmed to off in seconds night
+          name: Dimmed to off in seconds night (optional input_number helper)
           description:
             "### \U0001F313>\U0001F311⏲\U0001F319\n- input_number helper for
             dimmed to off to set the timer during the night in seconds.\n-
@@ -186,8 +234,21 @@ blueprint:
               domain:
                 - input_number
               multiple: false
+        in_num_dim_light_night_constant:
+          name: Dimmed to off in seconds night (used if no helper listed)
+          description:
+            "### \U0001F313>\U0001F311⏲\U0001F319\n- Number for
+            dimmed to off to set the timer during the night in seconds.\n-
+            Range:\n> (10s to 1800s)\n> or otherwise 10 seconds to 30
+            minutes "
+          default: 120
+          selector:
+            number:
+              min: 10
+              max: 1800
+              step: 1
         in_num_transition_time:
-          name: Light on transition time normal
+          name: Light on transition time normal (optional input_number helper)
           description: "### \U0001F4A1\U0001F199⏳\n- input_number helper for light
             transitioning on and off in seconds\n- suggested range:\n> (1s to 10s) "
           default: []
@@ -196,8 +257,18 @@ blueprint:
               domain:
                 - input_number
               multiple: false
+        in_num_transition_time_constant:
+          name: Light on transition time normal (used if no helper listed)
+          description: "### \U0001F4A1\U0001F199⏳\n- Number for light
+            transitioning on and off in seconds\n- Range:\n> (1s to 10s) "
+          default: 3
+          selector:
+            number:
+              min: 1
+              max: 10
+              step: 1
         in_num_transition_time_fast:
-          name: Light on transition time fast
+          name: Light on transition time fast (optional input_number helper)
           description:
             "### \U0001F4A1\U0001F199⏳⏩\n- input_number helper for light
             transitioning to and from dimmed states in seconds. (you&rsquo;ll want
@@ -208,17 +279,42 @@ blueprint:
               domain:
                 - input_number
               multiple: false
+        in_num_transition_time_fast_constant:
+          name: Light on transition time fast (used if no helper listed)
+          description:
+            "### \U0001F4A1\U0001F199⏳⏩\n- Number for light
+            transitioning to and from dimmed states in seconds. (you&rsquo;ll want
+            this fast to see the transition)\n- Range:\n> (1s to 3s) "
+          default: 1
+          selector:
+            number:
+              min: 1
+              max: 3
+              step: 1
         in_num_hold_scene:
-          name: Time to hold temporary scene
+          name: Time to hold temporary scene (optional input_number helper)
           description: "### ⌚🎨🎈\n- input_number helper to adjust for how
             long to hold the temporary scene that is saved in seconds.\n- suggested
-            range:\n> (1800s for 30 minutes) "
+            range:\n> (10s to 1800s)\n> or otherwise 10 seconds to 30
+            minutes "
           default: []
           selector:
             entity:
               domain:
                 - input_number
               multiple: false
+        in_num_hold_scene_constant:
+          name: Time to hold temporary scene (used if no helper listed)
+          description: "### ⌚🎨🎈\n- Number to adjust for how
+            long to hold the temporary scene that is saved in seconds.\n- 
+            Range:\n> (10s to 1800s)\n> or otherwise 10 seconds to 30
+            minutes "
+          default: 1800
+          selector:
+            number:
+              min: 10
+              max: 1800
+              step: 1
     datetime_settings:
       collapsed: true
       name: datetime settings *
@@ -273,13 +369,48 @@ mode: restart
 max_exceeded: silent
 variables:
   light_target_ent: !input light_target
-  in_num_dim_amt_ent: !input in_num_dim_amt
-  in_num_on_light_day_ent: !input in_num_on_light_day
-  in_num_on_light_night_ent: !input in_num_on_light_night
-  in_num_dim_light_day_ent: !input in_num_dim_light_day
-  in_num_dim_light_night_ent: !input in_num_dim_light_night
-  in_num_transition_time_ent: !input in_num_transition_time
-  in_num_transition_time_fast_ent: !input in_num_transition_time_fast
+  in_num_dim_amt_ent: >-
+    {% if (in_num_dim_amt | length > 0) %}
+      {{ in_num_dim_amt | int }}
+    {% else %}
+      {{ in_num_dim_amt_constant | int }}
+    {% endif %}
+  in_num_on_light_day_ent: >-
+    {% if (in_num_on_light_day | length > 0) %}
+      {{ in_num_on_light_day | int }}
+    {% else %}
+      {{ in_num_on_light_day_constant | int }}
+    {% endif %}
+  in_num_on_light_night_ent: >-
+    {% if (in_num_on_light_night | length > 0) %}
+      {{ in_num_on_light_night | int }}
+    {% else %}
+      {{ in_num_on_light_night_constant | int }}
+    {% endif %}
+  in_num_dim_light_day_ent: >-
+    {% if (in_num_dim_light_day | length > 0) %}
+      {{ in_num_dim_light_day | int }}
+    {% else %}
+      {{ in_num_dim_light_day_constant | int }}
+    {% endif %}
+  in_num_dim_light_night_ent: >-
+    {% if (in_num_dim_light_night | length > 0) %}
+      {{ in_num_dim_light_night | int }}
+    {% else %}
+      {{ in_num_dim_light_night_constant | int }}
+    {% endif %}
+  in_num_transition_time_ent: >-
+    {% if (in_num_transition_time | length > 0) %}
+      {{ in_num_transition_time | int }}
+    {% else %}
+      {{ in_num_transition_time_constant | int }}
+    {% endif %}
+  in_num_transition_time_fast_ent: >-
+    {% if (in_num_transition_time_fast | length > 0) %}
+      {{ in_num_transition_time_fast | int }}
+    {% else %}
+      {{ in_num_transition_time_fast_constant | int }}
+    {% endif %}
   # create the temp scene name based off this automation's ID
   temp_scene_name_ent: >-
     jjs_recovery_scene_for_zone_{{ this.entity_id.split('.')[-1] }}
@@ -405,6 +536,7 @@ action:
               - condition: trigger
                 id:
                   - motion_stopped
+            #when motion stops and the timer_on_to_dim starts up
             sequence:
               - if:
                   - condition: time
@@ -439,6 +571,7 @@ action:
               - condition: trigger
                 id:
                   - motion_stopped_canceled
+            #when the sensor that keeps the lights on senses motion
             sequence:
               - if:
                   - condition: state
@@ -467,6 +600,7 @@ action:
               - condition: trigger
                 id:
                   - motion_stopped_to_dim
+            #when the timer_on_to_dim finishes execute code below
             sequence:
               - if:
                   - condition: and
@@ -483,11 +617,6 @@ action:
                       snapshot_entities: !input light_target
                       scene_id: "{{ temp_scene_name_ent }}"
                     enabled: true
-                  # - delay:
-                  #     hours: 0
-                  #     minutes: 0
-                  #     seconds: 0
-                  #     milliseconds: 10
                   - if:
                       - condition: template
                         value_template: |-
@@ -515,27 +644,6 @@ action:
                               transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                             target:
                               entity_id: !input light_target
-                  # - service: light.turn_on
-                  #   data:
-                  #     brightness_step_pct: "{{ ((states(in_num_dim_amt_ent) | int) / 255 * -100) | int }}"
-                  #     transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
-                  #   target:
-                  #     entity_id: !input light_target
-                  # - delay:
-                  #     hours: 0
-                  #     minutes: 0
-                  #     seconds: "{{ states(in_num_transition_time_fast_ent) | int }}"
-                  #     milliseconds: 0
-                  # - if:
-                  #     - condition: state
-                  #       entity_id: !input light_target
-                  #       state: "off"
-                  #   then:
-                  #     - service: light.turn_on
-                  #       data:
-                  #         brightness_pct: 1
-                  #       target:
-                  #         entity_id: !input light_target
                   - if:
                       - condition: time
                         before: !input in_datetime_night_time
@@ -569,6 +677,7 @@ action:
               - condition: trigger
                 id:
                   - motion_stopped_to_off
+            #when the timer_dim_to_off finishes for both the lights being dim and for the duration after the lights are off
             sequence:
               - if:
                   - condition: and
