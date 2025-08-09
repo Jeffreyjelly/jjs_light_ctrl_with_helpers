@@ -1,15 +1,36 @@
 #replace all "roomexample" with the room of helpers you'd like to create
-# v1.1
+# v1.2
 
-# #if you needed an example light group uncomment this section below
+# These are only just the optional inpus here, suggestion to only just
+# copy the inputs from this example below.
 
-# #light group
-# light:
-#   - platform: group
-#     name: group roomexample all
-#     entities:
-#       - light.roomexample_bulb_1
-#       - light.roomexample_bulb_2
+##
+##EXAMPLE YAML FOR AUTOMATION
+##
+# alias: roomexample_with_bp
+# description: ""
+# use_blueprint:
+#   path: Jeffreyjelly/JJs_light_ctrl_w_helpers.yaml
+#   input:
+#     in_bool_auto_enable: input_boolean.in_bool_roomexample_auto_enable
+#     in_num_on_light_day: input_number.in_num_roomexample_on_light_day_dly
+#     in_num_on_light_night: input_number.in_num_roomexample_on_light_night_dly
+#     in_num_dim_light_day: input_number.in_num_roomexample_dim_light_day_dly
+#     in_num_dim_light_night: input_number.in_num_roomexample_dim_light_night_dly
+#     in_num_hold_scene: input_number.in_num_roomexample_hold_scene
+#     scene_day_light: scene.roomexample_relax
+#     scene_night_light: scene.roomexample_nightlight
+#
+##
+## Commented out inputs that are in the config_jj_light_helper.yaml
+##
+#
+#     in_num_dim_amt: input_number.in_num_roomexample_dim_amt
+#     in_num_transition_time: input_number.in_num_roomexample_transition_time_norm
+#     in_num_transition_time_fast: input_number.in_num_roomexample_transition_time_fast
+#     in_datetime_day_time: input_datetime.in_datetime_roomexample_day
+#     in_datetime_night_time: input_datetime.in_datetime_roomexample_night
+#
 
 #input_boolean
 input_boolean:
@@ -18,30 +39,8 @@ input_boolean:
     icon: mdi:flash-auto
     initial: on
 
-#timers
-timer:
-  timer_roomexample_motion_to_dim:
-    name: timer roomexample motion to dim
-    icon: mdi:lightbulb-on-90
-    restore: true
-  timer_roomexample_dim_to_off:
-    name: timer roomexample dim to off
-    icon: mdi:lightbulb-on-20
-    restore: true
-
 #input_numbers
 input_number:
-  # #if you want specific dimming percentage per the room uncomment this
-  # in_num_roomexample_perc_dimmed:
-  #   name: in num roomexample perc dimmed
-  #   min: -99
-  #   max: -1
-  #   #removed inital because every time HA reset it seemed to put it back to that number
-  #   # initial: -50
-  #   step: 1
-  #   mode: slider
-  #   unit_of_measurement: "% dimmed"
-  #   icon: mdi:debug-step-into
   in_num_roomexample_on_light_day_dly:
     name: in num roomexample on light day dly
     min: 20
@@ -90,45 +89,6 @@ input_number:
     mode: box
     unit_of_measurement: seconds
     icon: mdi:shield-moon-outline
-  # #if you want specific transition time per the room uncomment this
-  # in_num_roomexample_transition_time_norm:
-  #   name: in num roomexample transition time norm
-  #   min: 0
-  #   max: 10
-  #   #removed inital because every time HA reset it seemed to put it back to that number
-  #   # initial: 3
-  #   step: 1
-  #   mode: slider
-  #   unit_of_measurement: seconds
-  #   icon: mdi:transition
-  # in_num_roomexample_transition_time_fast:
-  #   name: in num roomexample transition time fast
-  #   min: 0
-  #   max: 3
-  #   #removed inital because every time HA reset it seemed to put it back to that number
-  #   # initial: 1
-  #   step: 1
-  #   mode: slider
-  #   unit_of_measurement: seconds
-  #   icon: mdi:transition
-
-# #if you wanted a specific datetime per the room uncomment these
-# #input_datetime
-# input_datetime:
-#   in_datetime_roomexample_night:
-#     name: in datetime roomexample night
-#     has_date: false
-#     has_time: true
-#     #removed inital because every time HA reset it seemed to put it back to that number
-#     # initial: "00:00"
-#     icon: mdi:lightbulb-night-outline
-#   in_datetime_roomexample_day:
-#     name: in datetime roomexample day
-#     has_date: false
-#     has_time: true
-#     #removed inital because every time HA reset it seemed to put it back to that number
-#     # initial: "5:15"
-#     icon: mdi:sun-clock-outline
 
 #scenes
 scene:
@@ -176,7 +136,7 @@ scene:
         color_temp: 233
     id: scene_roomexample_concentrate
 
-  #nightlight with red only color
+  #nightlight
   - name: roomexample Nightlight
     icon: "mdi:weather-night"
     entities:
@@ -186,217 +146,55 @@ scene:
         color_temp_kelvin: 2237
         color_temp: 447
     id: scene_roomexample_nightlight
-##
-##EXAMPLE YAML FOR AUTOMATION
-##   (need to replace binary_sensor.motion_brand_01_roomexample_occupancy below)
-##
-# alias: roomexample_with_bp
-# description: ""
-# use_blueprint:
-#   path: Jeffreyjelly/JJs_light_ctrl_w_helpers.yaml
-#   input:
-#     light_target: light.group_roomexample_all
-#     in_bool_auto_enable: input_boolean.in_bool_roomexample_auto_enable
-#     motion_detected_device: binary_sensor.motion_brand_01_roomexample_occupancy
-#     motion_not_detected_device: binary_sensor.motion_brand_01_roomexample_occupancy
-#     timer_on_to_dim: timer.timer_roomexample_motion_to_dim
-#     timer_dim_to_off: timer.timer_roomexample_dim_to_off
-#     in_num_dim_amt: input_number.in_num_dim_amt
-#     in_num_on_light_day: input_number.in_num_roomexample_on_light_day_dly
-#     in_num_on_light_night: input_number.in_num_roomexample_on_light_night_dly
-#     in_num_dim_light_day: input_number.in_num_roomexample_dim_light_day_dly
-#     in_num_dim_light_night: input_number.in_num_roomexample_dim_light_night_dly
-#     in_num_transition_time: input_number.in_num_transition_time_norm
-#     in_num_transition_time_fast: input_number.in_num_transition_time_fast
-#     in_datetime_day_time: input_datetime.in_datetime_day
-#     in_datetime_night_time: input_datetime.in_datetime_night
-#     scene_day_light: scene.roomexample_relax
-#     scene_night_light: scene.roomexample_nightlight
-#     temp_scene_name: jjs_recovery_scene_for_zone_roomexample
-#     in_num_hold_scene: input_number.in_num_roomexample_hold_scene
-#
-#
-#
-#
-##
-## EXAMPLE CARD CONFIGURATION FOR JUST THIS ROOM
-##   (example of combined rooms with config in config_jj_light_helper.yaml)
-##
-# roomexample card
-# type: vertical-stack
-# cards:
-#   - type: markdown
-#     content: |-
-#       ## roomexample settings
-#       ___
-#     theme: noctis
-#   - type: vertical-stack
-#     cards:
-#       - type: horizontal-stack
-#         cards:
-#           - features:
-#               - type: light-brightness
-#               - type: light-color-temp
-#             type: tile
-#             entity: light.group_roomexample_all
-#             state_content:
-#               - state
-#               - brightness
-#             color: primary
-#           - show_name: true
-#             show_icon: true
-#             type: button
-#             tap_action:
-#               action: toggle
-#             entity: input_boolean.in_bool_roomexample_auto_enable
-#             icon_height: 48px
-#             show_state: false
-#       - type: entities
-#         entities:
-#           - entity: input_select.in_select_light_settings_card
-#       - type: conditional
-#         conditions:
-#           - condition: state
-#             entity: input_select.in_select_light_settings_card
-#             state: Lights
-#         card:
-#           type: vertical-stack
-#           cards:
-#             - type: horizontal-stack
-#               cards:
-#                 - show_name: true
-#                   show_icon: true
-#                   type: button
-#                   tap_action:
-#                     action: toggle
-#                   entity: scene.roomexample_relax
-#                   icon_height: 25px
-#                 - show_name: true
-#                   show_icon: true
-#                   type: button
-#                   tap_action:
-#                     action: toggle
-#                   icon_height: 25px
-#                   entity: scene.roomexample_nightlight
-#             - type: horizontal-stack
-#               cards:
-#                 - show_name: true
-#                   show_icon: true
-#                   type: button
-#                   tap_action:
-#                     action: toggle
-#                   entity: scene.roomexample_concentrate
-#                   icon_height: 25px
-#                 - show_name: true
-#                   show_icon: true
-#                   type: button
-#                   tap_action:
-#                     action: toggle
-#                   entity: scene.roomexample_energize
-#                   icon_height: 25px
-#                 - show_name: true
-#                   show_icon: true
-#                   type: button
-#                   tap_action:
-#                     action: toggle
-#                   entity: scene.roomexample_read
-#                   icon_height: 25px
-#       - type: conditional
-#         conditions:
-#           - condition: state
-#             entity: input_select.in_select_light_settings_card
-#             state: On to dim values
-#         card:
-#           type: vertical-stack
-#           cards:
-#             - type: markdown
-#               content: >-
-#                 ## On to dim
-#
-#                 > The time it takes to go from an [**On**] state to a
-#                 [**Dimmed**] state.
-#             - type: entities
-#               entities:
-#                 - entity: input_number.in_num_roomexample_on_light_day_dly
-#                   secondary_info: entity-id
-#                   name: Day
-#                 - entity: input_number.in_num_roomexample_on_light_night_dly
-#                   name: Night
-#                   secondary_info: entity-id
-#               state_color: false
-#             - type: vertical-stack
-#               cards:
-#                 - type: tile
-#                   entity: timer.timer_roomexample_motion_to_dim
-#                   color: primary
-#                   show_entity_picture: false
-#                   hide_state: false
-#                   vertical: false
-#                   state_content:
-#                     - state
-#                     - last-changed
-#                     - duration
-#                 - type: tile
-#                   entity: timer.timer_roomexample_dim_to_off
-#                   color: primary
-#                   show_entity_picture: false
-#                   hide_state: false
-#                   vertical: false
-#                   state_content:
-#                     - state
-#                     - last-changed
-#                     - duration
-#       - type: conditional
-#         conditions:
-#           - condition: state
-#             entity: input_select.in_select_light_settings_card
-#             state: Dim to off values
-#         card:
-#           type: vertical-stack
-#           cards:
-#             - type: markdown
-#               content: >-
-#                 ## Dim to off
-#
-#                 > The time it takes to go from a [**dimmed**] state to an
-#                 [**off**] state.
-#             - type: entities
-#               entities:
-#                 - entity: input_number.in_num_roomexample_dim_light_day_dly
-#                   name: Day
-#                   secondary_info: entity-id
-#                 - entity: input_number.in_num_roomexample_dim_light_night_dly
-#                   name: Night
-#                   secondary_info: entity-id
-#             - type: markdown
-#               content: >-
-#                 ## Hold Scene
-#
-#                 > How long in seconds before it doesn't use the last light
-#                 saved scene state.
-#             - type: entities
-#               entities:
-#                 - entity: input_number.in_num_roomexample_hold_scene
-#                   name: Hold scene
-#             - type: vertical-stack
-#               cards:
-#                 - type: tile
-#                   entity: timer.timer_roomexample_motion_to_dim
-#                   color: primary
-#                   show_entity_picture: false
-#                   hide_state: false
-#                   vertical: false
-#                   state_content:
-#                     - state
-#                     - last-changed
-#                     - duration
-#                 - type: tile
-#                   entity: timer.timer_roomexample_dim_to_off
-#                   color: primary
-#                   show_entity_picture: false
-#                   hide_state: false
-#                   vertical: false
-#                   state_content:
-#                     - state
-#                     - last-changed
-#                     - duration
+    
+
+
+  # #if you want specific dimming percentage per the room uncomment this
+  # in_num_roomexample_dim_amt:
+  #   name: in num dim amount for roomexample
+  #   min: 0
+  #   max: 255
+  #   step: 1
+  #   mode: slider
+  #   unit_of_measurement: "dim amount"
+  #   icon: mdi:debug-step-into
+
+  # #if you want specific transition time per the room uncomment this
+  # in_num_roomexample_transition_time_norm:
+  #   name: in num roomexample transition time norm
+  #   min: 0
+  #   max: 10
+  #   #removed inital because every time HA reset it seemed to put it back to that number
+  #   # initial: 3
+  #   step: 1
+  #   mode: slider
+  #   unit_of_measurement: seconds
+  #   icon: mdi:transition
+  # in_num_roomexample_transition_time_fast:
+  #   name: in num roomexample transition time fast
+  #   min: 0
+  #   max: 3
+  #   #removed inital because every time HA reset it seemed to put it back to that number
+  #   # initial: 1
+  #   step: 1
+  #   mode: slider
+  #   unit_of_measurement: seconds
+  #   icon: mdi:transition
+
+# #if you wanted a specific datetime per the room uncomment these
+# #input_datetime
+# input_datetime:
+#   in_datetime_roomexample_day:
+#     name: in datetime roomexample day
+#     has_date: false
+#     has_time: true
+#     #removed inital because every time HA reset it seemed to put it back to that number
+#     # initial: "5:15"
+#     icon: mdi:sun-clock-outline
+#   in_datetime_roomexample_night:
+#     name: in datetime roomexample night
+#     has_date: false
+#     has_time: true
+#     #removed inital because every time HA reset it seemed to put it back to that number
+#     # initial: "00:00"
+#     icon: mdi:lightbulb-night-outline

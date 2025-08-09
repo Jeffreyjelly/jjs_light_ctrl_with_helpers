@@ -77,6 +77,7 @@ blueprint
 ## Ideas to add / Things to test
  - boolean to not save last on state for others to use this with other automations
  - ~~another input_number for controlling the length of time it preserves the temporary scene instead of just copying the `in_num_{name_of_area}_dim_light_{day}_dly`.~~ - done
+ - Need to add input light sensitivity to enable/disable this automation and make it optional.
  - Need the ability to monitor if the lights went from unknown state to on. (power off scenario or light reconnecting)
    - Let the user choose what will happen. Default will be turn on lights and startup the original on to dim timer if no motion.
    - Another option from unknown to off and having the automation trigger to turn the light on if wanted. 
