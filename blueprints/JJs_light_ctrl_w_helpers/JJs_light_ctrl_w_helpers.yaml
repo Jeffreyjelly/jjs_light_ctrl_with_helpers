@@ -1,7 +1,7 @@
 blueprint:
   name: "⚡\U0001F4A1 JJs Light Control With Helpers \U0001F4A1⚡"
   description: "# JJs Light Control With Helpers\n
-    **Version: 1.3.13**\n
+    **Version: 1.3.14**\n
     ## Light control automation that has:\n
     - Two light scenes, one for day and night\n
     - Wont override the current light state if manually changed\n
@@ -456,7 +456,7 @@ variables:
     {% endif %}
   #active_lights helps to only turn on or only dim lights that were on already for the on > dim or also off > on (preserved scene)
   active_lights: >-
-    {{ expand(!input light_target)
+    {{ expand(light_target)
        | selectattr('state', 'eq', 'on')
        | map(attribute='entity_id')
        | list }}
@@ -498,138 +498,99 @@ trigger:
     id: manual_off
 condition: []
 action:
-  - choose:
-    - conditions:
+  # - choose:
+  #   - conditions:
+  #     - condition: template
+  #       value_template: "{{ not same_timer_check }}"
+  #     sequence:
+  #       - service: persistent_notification.create
+  #         data:
+  #           title: "Blueprint Setup Error"
+  #           message: "You cannot use the same timer for both timer_on_to_dim and timer_dim_to_off."
+  #       - stop: "Same timers detected. Stopping automation."
+  #   - default:
+  - if:
       - condition: template
-        value_template: "{{ not same_timer_check }}"
-      sequence:
-        - service: persistent_notification.create
-          data:
-            title: "Blueprint Setup Error"
-            message: "You cannot use the same timer for both timer_on_to_dim and timer_dim_to_off."
-        - stop: "Same timers detected. Stopping automation."
-    - default:
-      - if:
-          - condition: state
-            entity_id: "{{ in_bool_auto_enable_ent }}"
-            state: "on"
-        then:
-          - choose:
-              - conditions:
-                  - condition: trigger
-                    id: motion_detected
-                sequence:
+        value_template: >
+          {% if in_bool_auto_enable | length > 0 %}
+            {{ is_state(in_bool_auto_enable, "on") }}
+          {% else %}
+            true
+          {% endif %}
+    then:
+      - choose:
+          - conditions:
+              - condition: trigger
+                id: motion_detected
+            sequence:
+              - if:
+                  - condition: and
+                    conditions:
+                      - condition: state
+                        entity_id: !input light_target
+                        state: "off"
+                      #removing in case if the user manually turn off the lights while the first timer was active
+                      # - condition: state
+                      #   entity_id: !input timer_on_to_dim
+                      #   state: idle
+                      - condition: state
+                        entity_id: !input timer_dim_to_off
+                        state: idle
+                # if lights are off and no timers are active
+                then:
                   - if:
-                      - condition: and
-                        conditions:
-                          - condition: state
-                            entity_id: !input light_target
-                            state: "off"
-                          #removing in case if the user manually turn off the lights while the first timer was active
-                          # - condition: state
-                          #   entity_id: !input timer_on_to_dim
-                          #   state: idle
-                          - condition: state
-                            entity_id: !input timer_dim_to_off
-                            state: idle
-                    # if lights are off and no timers are active
-                    then:
-                      - if:
-                          - condition: time
-                            before: "{{ in_datetime_night_time_ent }}"
-                            after: "{{ in_datetime_day_time_ent }}"
-                            alias: Time condition day
-                        then:
-                          - service: scene.turn_on
-                            target:
-                              entity_id: !input scene_day_light
-                            data:
-                              transition: "{{states(in_num_transition_time_ent) | int }}"
-                            metadata: {}
-                        else:
-                          - if:
-                              - condition: time
-                                before: "{{ in_datetime_day_time_ent }}"
-                                after: "{{ in_datetime_night_time_ent }}"
-                                alias: Time condition night
-                            then:
-                              - service: scene.turn_on
-                                target:
-                                  entity_id: !input scene_night_light
-                                data:
-                                  transition: "{{ states(in_num_transition_time_ent)| int }}"
-                                metadata: {}
-                            alias: Night path
-                        alias: Set light scene since lights were off
-                    # if the timer dim_to_off is on but lights are off return to the saved light scene
-                    else:
-                      - if:
-                          - condition: state
-                            entity_id: !input timer_dim_to_off
-                            state: active
-                        then:
-                          - service: scene.turn_on
-                            data:
-                              transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
-                            target:
-                              entity_id:
-                                - scene.{{ temp_scene_name_ent }}
-                          - service: timer.cancel
-                            data: {}
-                            target:
-                              entity_id: !input timer_dim_to_off
-                        alias:
-                          if timer dim_to_off is active revert to saved scene else, clear out
-                          the on_to_dim timer
-                        else:
-                          - service: timer.cancel
-                            data: {}
-                            target:
-                              entity_id: !input timer_on_to_dim
-                    alias:
-                      if all lights are off and all timers are idle set scene else, recover
-                      scene
-              - conditions:
-                  - condition: trigger
-                    id:
-                      - motion_stopped
-                #when motion stops and the timer_on_to_dim starts up
-                sequence:
-                  - if:
-                      - condition: time
-                        before: "{{ in_datetime_night_time_ent }}"
-                        after: "{{ in_datetime_day_time_ent }}"
+                      - condition: template
+                        # Daytime condition:
+                        # This template checks if the current time is between 'day_time' and 'night_time'.
+                        # It also works when the range crosses midnight. Example:
+                        #   - day_time: 07:00:00, night_time: 22:00:00 → checks 07:00–22:00 normally.
+                        #   - day_time: 22:00:00, night_time: 07:00:00 → checks overnight range, e.g., 23:00 or 03:00 is "day".
+                        value_template: >
+                          {% set night_time = strptime(states(in_datetime_night_time_ent), "%H:%M:%S").time() %}
+                          {% set day_time = strptime(states(in_datetime_day_time_ent), "%H:%M:%S").time() %}
+                          {% set now_time = now().time() %}
+
+                          {{
+                            (day_time <= now_time <= night_time)
+                            if day_time < night_time
+                            else (now_time >= day_time or now_time <= night_time)
+                          }}
                         alias: Time condition day
                     then:
-                      - service: timer.start
-                        data:
-                          duration:
-                            "{{ (states(in_num_on_light_day_ent)|int )|timestamp_custom('%H:%M:%S',
-                            false) }}"
+                      - service: scene.turn_on
                         target:
-                          entity_id: !input timer_on_to_dim
+                          entity_id: !input scene_day_light
+                        data:
+                          transition: "{{states(in_num_transition_time_ent) | int }}"
+                        metadata: {}
                     else:
                       - if:
-                          - condition: time
-                            before: "{{ in_datetime_day_time_ent }}"
-                            after: "{{ in_datetime_night_time_ent }}"
+                          - condition: template
+                            # Nighttime condition:
+                            # Similar logic to daytime, but flipped — checks if now is between 'night_time' and 'day_time'.
+                            # Also supports ranges that cross midnight, e.g., 22:00–07:00.
+                            value_template: >
+                              {% set night_time = strptime(states(in_datetime_night_time_ent), "%H:%M:%S").time() %}
+                              {% set day_time = strptime(states(in_datetime_day_time_ent), "%H:%M:%S").time() %}
+                              {% set now_time = now().time() %}
+
+                              {{
+                                (night_time <= now_time <= day_time)
+                                if night_time < day_time
+                                else (now_time >= night_time or now_time <= day_time)
+                              }}
                             alias: Time condition night
                         then:
-                          - service: timer.start
-                            data:
-                              duration:
-                                "{{ (states(in_num_on_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
-                                false) }}"
+                          - service: scene.turn_on
                             target:
-                              entity_id: !input timer_on_to_dim
-                        alias: Night condition
-                    alias: startup on_to_dim timer based on day
-              - conditions:
-                  - condition: trigger
-                    id:
-                      - motion_stopped_canceled
-                #when the sensor that keeps the lights on senses motion
-                sequence:
+                              entity_id: !input scene_night_light
+                            data:
+                              transition: "{{ states(in_num_transition_time_ent)| int }}"
+                            metadata: {}
+                        alias: Night path
+                    alias: Set light scene since lights were off
+                # if the timer dim_to_off is on but lights are off return to the saved light scene
+                else:
                   - if:
                       - condition: state
                         entity_id: !input timer_dim_to_off
@@ -646,119 +607,272 @@ action:
                         target:
                           entity_id: !input timer_dim_to_off
                     alias:
-                      if timer dim_to_off is active revert to saved scene and cancel timer
-                      else, cancel the on_to_dim timer
+                      if timer dim_to_off is active revert to saved scene else, clear out
+                      the on_to_dim timer
                     else:
                       - service: timer.cancel
                         data: {}
                         target:
                           entity_id: !input timer_on_to_dim
-              - conditions:
-                  - condition: trigger
-                    id:
-                      - motion_stopped_to_dim
-                #when the timer_on_to_dim finishes execute code below
-                sequence:
+                alias:
+                  if all lights are off and all timers are idle set scene else, recover
+                  scene
+          - conditions:
+              - condition: trigger
+                id:
+                  - motion_stopped
+            #when motion stops and the timer_on_to_dim starts up
+            sequence:
+              - if:
+                  - condition: template
+                    # Daytime condition:
+                    # This template checks if the current time is between 'day_time' and 'night_time'.
+                    # It also works when the range crosses midnight. Example:
+                    #   - day_time: 07:00:00, night_time: 22:00:00 → checks 07:00–22:00 normally.
+                    #   - day_time: 22:00:00, night_time: 07:00:00 → checks overnight range, e.g., 23:00 or 03:00 is "day".
+                    value_template: >
+                      {% set night_time = strptime(states(in_datetime_night_time_ent), "%H:%M:%S").time() %}
+                      {% set day_time = strptime(states(in_datetime_day_time_ent), "%H:%M:%S").time() %}
+                      {% set now_time = now().time() %}
+
+                      {{
+                        (day_time <= now_time <= night_time)
+                        if day_time < night_time
+                        else (now_time >= day_time or now_time <= night_time)
+                      }}
+                    alias: Time condition day
+                then:
+                  - service: timer.start
+                    data:
+                      duration:
+                        "{{ (states(in_num_on_light_day_ent)|int )|timestamp_custom('%H:%M:%S',
+                        false) }}"
+                    target:
+                      entity_id: !input timer_on_to_dim
+                else:
                   - if:
-                      - condition: and
-                        conditions:
-                          - condition: state
-                            entity_id: !input light_target
-                            state: "on"
-                          - condition: state
-                            entity_id: !input timer_on_to_dim
-                            state: idle
+                      - condition: template
+                        # Nighttime condition:
+                        # Similar logic to daytime, but flipped — checks if now is between 'night_time' and 'day_time'.
+                        # Also supports ranges that cross midnight, e.g., 22:00–07:00.
+                        value_template: >
+                          {% set night_time = strptime(states(in_datetime_night_time_ent), "%H:%M:%S").time() %}
+                          {% set day_time = strptime(states(in_datetime_day_time_ent), "%H:%M:%S").time() %}
+                          {% set now_time = now().time() %}
+
+                          {{
+                            (night_time <= now_time <= day_time)
+                            if night_time < day_time
+                            else (now_time >= night_time or now_time <= day_time)
+                          }}
+                        alias: Time condition night
                     then:
-                      - service: scene.create
+                      - service: timer.start
                         data:
-                          # snapshot_entities: !input light_target
-                          #attempting to preserve only the lights that were on for scenes where some are off
-                          snapshot_entities: "{{ active_lights }}"
-                          scene_id: "{{ temp_scene_name_ent }}"
-                        enabled: true
+                          duration:
+                            "{{ (states(in_num_on_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
+                            false) }}"
+                        target:
+                          entity_id: !input timer_on_to_dim
+                    alias: Night condition
+                alias: startup on_to_dim timer based on day
+          - conditions:
+              - condition: trigger
+                id:
+                  - motion_stopped_canceled
+            #when the sensor that keeps the lights on senses motion
+            sequence:
+              - if:
+                  - condition: state
+                    entity_id: !input timer_dim_to_off
+                    state: active
+                then:
+                  - service: scene.turn_on
+                    data:
+                      transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
+                    target:
+                      entity_id:
+                        - scene.{{ temp_scene_name_ent }}
+                  - service: timer.cancel
+                    data: {}
+                    target:
+                      entity_id: !input timer_dim_to_off
+                alias:
+                  if timer dim_to_off is active revert to saved scene and cancel timer
+                  else, cancel the on_to_dim timer
+                else:
+                  - service: timer.cancel
+                    data: {}
+                    target:
+                      entity_id: !input timer_on_to_dim
+          - conditions:
+              - condition: trigger
+                id:
+                  - motion_stopped_to_dim
+            #when the timer_on_to_dim finishes execute code below
+            sequence:
+              - if:
+                  - condition: and
+                    conditions:
+                      - condition: state
+                        entity_id: !input light_target
+                        state: "on"
+                      - condition: state
+                        entity_id: !input timer_on_to_dim
+                        state: idle
+                then:
+                  - service: scene.create
+                    data:
+                      # snapshot_entities: !input light_target
+                      #attempting to preserve only the lights that were on for scenes where some are off
+                      snapshot_entities: "{{ active_lights }}"
+                      scene_id: "{{ temp_scene_name_ent }}"
+                    enabled: true
+                  - if:
+                      - condition: template
+                        value_template: |-
+                          {% if state_attr(light_target_ent,'brightness') != none %}
+                          True
+                          {% endif %}
+                    then:
                       - if:
                           - condition: template
-                            value_template: |-
-                              {% if state_attr(light_target_ent,'brightness') != none %}
-                              True
-                              {% endif %}
+                            value_template: >-
+                              {% if int(states(in_num_dim_amt_ent)) >
+                              state_attr(light_target_ent,'brightness') %} True {% endif %}
                         then:
-                          - if:
-                              - condition: template
-                                value_template: >-
-                                  {% if int(states(in_num_dim_amt_ent)) >
-                                  state_attr(light_target_ent,'brightness') %} True {% endif %}
-                            then:
-                              - service: light.turn_on
-                                data:
-                                  brightness_step: >-
-                                    {{ (((state_attr(light_target_ent,'brightness')|int(0)) * -1) + 5) }}
-                                  transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
-                                target:
-                                  # entity_id: !input light_target
-                                  #hoping that using active lights here will not turn on extra lights
-                                  entity_id: "{{ active_lights }}"
-                            else:
-                              - service: light.turn_on
-                                data:
-                                  brightness_step: "{{ ((states(in_num_dim_amt_ent)|int)*-1) }}"
-                                  transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
-                                target:
-                                  # entity_id: !input light_target
-                                  #hoping that using active lights here will not turn on extra lights
-                                  entity_id: "{{ active_lights }}"
+                          - service: light.turn_on
+                            data:
+                              brightness_step: >-
+                                {{ (((state_attr(light_target_ent,'brightness')|int(0)) * -1) + 5) }}
+                              transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
+                            target:
+                              # entity_id: !input light_target
+                              #hoping that using active lights here will not turn on extra lights
+                              entity_id: "{{ active_lights }}"
+                        else:
+                          - service: light.turn_on
+                            data:
+                              brightness_step: "{{ ((states(in_num_dim_amt_ent)|int)*-1) }}"
+                              transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
+                            target:
+                              # entity_id: !input light_target
+                              #hoping that using active lights here will not turn on extra lights
+                              entity_id: "{{ active_lights }}"
+                  - if:
+                      - condition: template
+                        # Daytime condition:
+                        # This template checks if the current time is between 'day_time' and 'night_time'.
+                        # It also works when the range crosses midnight. Example:
+                        #   - day_time: 07:00:00, night_time: 22:00:00 → checks 07:00–22:00 normally.
+                        #   - day_time: 22:00:00, night_time: 07:00:00 → checks overnight range, e.g., 23:00 or 03:00 is "day".
+                        value_template: >
+                          {% set night_time = strptime(states(in_datetime_night_time_ent), "%H:%M:%S").time() %}
+                          {% set day_time = strptime(states(in_datetime_day_time_ent), "%H:%M:%S").time() %}
+                          {% set now_time = now().time() %}
+
+                          {{
+                            (day_time <= now_time <= night_time)
+                            if day_time < night_time
+                            else (now_time >= day_time or now_time <= night_time)
+                          }}
+                        alias: Time condition day
+                    then:
+                      - service: timer.start
+                        data:
+                          duration:
+                            "{{ (states(in_num_dim_light_day_ent)|int)|timestamp_custom('%H:%M:%S',
+                            false) }}"
+                        target:
+                          entity_id: !input timer_dim_to_off
+                    else:
                       - if:
-                          - condition: time
-                            before: "{{ in_datetime_night_time_ent }}"
-                            after: "{{ in_datetime_day_time_ent }}"
-                            alias: Time condition day
+                          - condition: template
+                            # Nighttime condition:
+                            # Similar logic to daytime, but flipped — checks if now is between 'night_time' and 'day_time'.
+                            # Also supports ranges that cross midnight, e.g., 22:00–07:00.
+                            value_template: >
+                              {% set night_time = strptime(states(in_datetime_night_time_ent), "%H:%M:%S").time() %}
+                              {% set day_time = strptime(states(in_datetime_day_time_ent), "%H:%M:%S").time() %}
+                              {% set now_time = now().time() %}
+
+                              {{
+                                (night_time <= now_time <= day_time)
+                                if night_time < day_time
+                                else (now_time >= night_time or now_time <= day_time)
+                              }}
+                            alias: Time condition night
                         then:
                           - service: timer.start
                             data:
                               duration:
-                                "{{ (states(in_num_dim_light_day_ent)|int)|timestamp_custom('%H:%M:%S',
+                                "{{ (states(in_num_dim_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
                                 false) }}"
                             target:
                               entity_id: !input timer_dim_to_off
-                        else:
-                          - if:
-                              - condition: time
-                                before: "{{ in_datetime_day_time_ent }}"
-                                after: "{{ in_datetime_night_time_ent }}"
-                                alias: Time condition night
-                            then:
-                              - service: timer.start
-                                data:
-                                  duration:
-                                    "{{ (states(in_num_dim_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
-                                    false) }}"
-                                target:
-                                  entity_id: !input timer_dim_to_off
-                            alias: Night condition
-                    enabled: true
-              - conditions:
-                  - condition: trigger
-                    id:
-                      - motion_stopped_to_off
-                #when the timer_dim_to_off finishes for both the lights being dim and for the duration after the lights are off
-                sequence:
+                        alias: Night condition
+                enabled: true
+          - conditions:
+              - condition: trigger
+                id:
+                  - motion_stopped_to_off
+            #when the timer_dim_to_off finishes for both the lights being dim and for the duration after the lights are off
+            sequence:
+              - if:
+                  - condition: and
+                    conditions:
+                      - condition: state
+                        entity_id: !input light_target
+                        state: "on"
+                then:
+                  - service: light.turn_off
+                    data:
+                      transition: "{{ states(in_num_transition_time_ent) | int }}"
+                    target:
+                      entity_id: !input light_target
                   - if:
-                      - condition: and
-                        conditions:
-                          - condition: state
-                            entity_id: !input light_target
-                            state: "on"
+                      - condition: template
+                        # Daytime condition:
+                        # This template checks if the current time is between 'day_time' and 'night_time'.
+                        # It also works when the range crosses midnight. Example:
+                        #   - day_time: 07:00:00, night_time: 22:00:00 → checks 07:00–22:00 normally.
+                        #   - day_time: 22:00:00, night_time: 07:00:00 → checks overnight range, e.g., 23:00 or 03:00 is "day".
+                        value_template: >
+                          {% set night_time = strptime(states(in_datetime_night_time_ent), "%H:%M:%S").time() %}
+                          {% set day_time = strptime(states(in_datetime_day_time_ent), "%H:%M:%S").time() %}
+                          {% set now_time = now().time() %}
+
+                          {{
+                            (day_time <= now_time <= night_time)
+                            if day_time < night_time
+                            else (now_time >= day_time or now_time <= night_time)
+                          }}
+                        alias: Time condition day
                     then:
-                      - service: light.turn_off
+                      - service: timer.start
                         data:
-                          transition: "{{ states(in_num_transition_time_ent) | int }}"
+                          duration:
+                            "{{ (states(in_num_hold_scene_ent)|int)|timestamp_custom('%H:%M:%S',
+                            false) }}"
                         target:
-                          entity_id: !input light_target
+                          entity_id: !input timer_dim_to_off
+                    else:
                       - if:
-                          - condition: time
-                            before: "{{ in_datetime_night_time_ent }}"
-                            after: "{{ in_datetime_day_time_ent }}"
-                            alias: Time condition day
+                          - condition: template
+                            # Nighttime condition:
+                            # Similar logic to daytime, but flipped — checks if now is between 'night_time' and 'day_time'.
+                            # Also supports ranges that cross midnight, e.g., 22:00–07:00.
+                            value_template: >
+                              {% set night_time = strptime(states(in_datetime_night_time_ent), "%H:%M:%S").time() %}
+                              {% set day_time = strptime(states(in_datetime_day_time_ent), "%H:%M:%S").time() %}
+                              {% set now_time = now().time() %}
+
+                              {{
+                                (night_time <= now_time <= day_time)
+                                if night_time < day_time
+                                else (now_time >= night_time or now_time <= day_time)
+                              }}
+                            alias: Time condition night
                         then:
                           - service: timer.start
                             data:
@@ -767,34 +881,20 @@ action:
                                 false) }}"
                             target:
                               entity_id: !input timer_dim_to_off
-                        else:
-                          - if:
-                              - condition: time
-                                before: "{{ in_datetime_day_time_ent }}"
-                                after: "{{ in_datetime_night_time_ent }}"
-                                alias: Time condition night
-                            then:
-                              - service: timer.start
-                                data:
-                                  duration:
-                                    "{{ (states(in_num_hold_scene_ent)|int)|timestamp_custom('%H:%M:%S',
-                                    false) }}"
-                                target:
-                                  entity_id: !input timer_dim_to_off
-                            alias: Night condition
-                    enabled: true
-                    else:
-                      - stop:
-                          Stopped because last timer expired with lights off and this is the
-                          end of the automation.
-              - conditions:
-                  - condition: trigger
-                    id: manual_off
-                sequence:
-                  - service: timer.cancel
-                    data: {}
-                    target:
-                      entity_id:
-                        - !input timer_on_to_dim
-                        - !input timer_dim_to_off
-        alias: if boolean for automation enable is on
+                        alias: Night condition
+                enabled: true
+                else:
+                  - stop:
+                      Stopped because last timer expired with lights off and this is the
+                      end of the automation.
+          - conditions:
+              - condition: trigger
+                id: manual_off
+            sequence:
+              - service: timer.cancel
+                data: {}
+                target:
+                  entity_id:
+                    - !input timer_on_to_dim
+                    - !input timer_dim_to_off
+    alias: if boolean for automation enable is on
