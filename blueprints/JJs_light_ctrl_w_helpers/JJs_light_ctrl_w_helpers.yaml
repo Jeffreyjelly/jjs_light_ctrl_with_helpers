@@ -1,7 +1,7 @@
 blueprint:
   name: "⚡\U0001F4A1 JJs Light Control With Helpers \U0001F4A1⚡"
   description: "# JJs Light Control With Helpers\n
-    **Version: 1.3.11**\n
+    **Version: 1.3.12**\n
     ## Light control automation that has:\n
     - Two light scenes, one for day and night\n
     - Wont override the current light state if manually changed\n
@@ -454,6 +454,12 @@ variables:
     {% else %}
       true
     {% endif %}
+  #active_lights helps to only turn on or only dim lights that were on already for the on > dim or also off > on (preserved scene)
+  active_lights: >-
+    {{ expand(!input light_target)
+       | selectattr('state', 'eq', 'on')
+       | map(attribute='entity_id')
+       | list }}
 # alias: JJs light ctrl with helpers
 trigger:
   - platform: state
@@ -653,7 +659,9 @@ action:
                 then:
                   - service: scene.create
                     data:
-                      snapshot_entities: !input light_target
+                      # snapshot_entities: !input light_target
+                      #attempting to preserve only the lights that were on for scenes where some are off
+                      snapshot_entities: "{{ active_lights }}"
                       scene_id: "{{ temp_scene_name_ent }}"
                     enabled: true
                   - if:
@@ -675,14 +683,18 @@ action:
                                 {{ (((state_attr(light_target_ent,'brightness')|int(0)) * -1) + 5) }}
                               transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                             target:
-                              entity_id: !input light_target
+                              # entity_id: !input light_target
+                              #hoping that using active lights here will not turn on extra lights
+                              entity_id: "{{ active_lights }}"
                         else:
                           - service: light.turn_on
                             data:
                               brightness_step: "{{ ((states(in_num_dim_amt_ent)|int)*-1) }}"
                               transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                             target:
-                              entity_id: !input light_target
+                              # entity_id: !input light_target
+                              #hoping that using active lights here will not turn on extra lights
+                              entity_id: "{{ active_lights }}"
                   - if:
                       - condition: time
                         before: "{{ in_datetime_night_time_ent }}"
