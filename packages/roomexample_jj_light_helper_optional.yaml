@@ -83,7 +83,7 @@ input_number:
     icon: mdi:timer-off-outline
   in_num_roomexample_hold_scene:
     name: in num roomexample hold scene
-    min: 1
+    min: 10
     max: 7200
     step: 1
     mode: box

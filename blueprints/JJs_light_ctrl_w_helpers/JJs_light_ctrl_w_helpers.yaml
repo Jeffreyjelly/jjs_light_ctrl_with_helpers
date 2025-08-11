@@ -1,7 +1,7 @@
 blueprint:
   name: "⚡\U0001F4A1 JJs Light Control With Helpers \U0001F4A1⚡"
   description: "# JJs Light Control With Helpers\n
-    **Version: 1.3.14**\n
+    **Version: 1.3.16**\n
     ## Light control automation that has:\n
     - Two light scenes, one for day and night\n
     - Wont override the current light state if manually changed\n
@@ -381,86 +381,96 @@ blueprint:
                 - input_boolean
               multiple: false
   source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/blueprints/JJs_light_ctrl_w_helpers/JJs_light_ctrl_w_helpers.yaml
-mode: restart
-max_exceeded: silent
+mode: single
 variables:
   light_target_ent: !input light_target
-  in_num_dim_amt_ent: >-
-    {% if (in_num_dim_amt | length > 0) %}
-      {{ in_num_dim_amt | int }}
-    {% else %}
-      {{ in_num_dim_amt_constant | int }}
-    {% endif %}
-  in_num_on_light_day_ent: >-
-    {% if (in_num_on_light_day | length > 0) %}
-      {{ in_num_on_light_day | int }}
-    {% else %}
-      {{ in_num_on_light_day_constant | int }}
-    {% endif %}
-  in_num_on_light_night_ent: >-
-    {% if (in_num_on_light_night | length > 0) %}
-      {{ in_num_on_light_night | int }}
-    {% else %}
-      {{ in_num_on_light_night_constant | int }}
-    {% endif %}
-  in_num_dim_light_day_ent: >-
-    {% if (in_num_dim_light_day | length > 0) %}
-      {{ in_num_dim_light_day | int }}
-    {% else %}
-      {{ in_num_dim_light_day_constant | int }}
-    {% endif %}
-  in_num_dim_light_night_ent: >-
-    {% if (in_num_dim_light_night | length > 0) %}
-      {{ in_num_dim_light_night | int }}
-    {% else %}
-      {{ in_num_dim_light_night_constant | int }}
-    {% endif %}
-  in_num_transition_time_ent: >-
-    {% if (in_num_transition_time | length > 0) %}
-      {{ in_num_transition_time | int }}
-    {% else %}
-      {{ in_num_transition_time_constant | int }}
-    {% endif %}
-  in_num_transition_time_fast_ent: >-
-    {% if (in_num_transition_time_fast | length > 0) %}
-      {{ in_num_transition_time_fast | int }}
-    {% else %}
-      {{ in_num_transition_time_fast_constant | int }}
-    {% endif %}
-  in_num_hold_scene_ent: >-
-    {% if (in_num_hold_scene | length > 0) %}
-      {{ in_num_hold_scene | int }}
-    {% else %}
-      {{ in_num_hold_scene_constant | int }}
-    {% endif %}
+  in_num_dim_amt_ent: !input in_num_dim_amt
+  # in_num_dim_amt_ent: >-
+  #   {% if (in_num_dim_amt | length > 0) %}
+  #     {{ in_num_dim_amt | int }}
+  #   {% else %}
+  #     {{ in_num_dim_amt_constant | int }}
+  #   {% endif %}
+  in_num_on_light_day_ent: !input in_num_on_light_day
+  # in_num_on_light_day_ent: >-
+  #   {% if (in_num_on_light_day | length > 0) %}
+  #     {{ in_num_on_light_day | int }}
+  #   {% else %}
+  #     {{ in_num_on_light_day_constant | int }}
+  #   {% endif %}
+  in_num_on_light_night_ent: !input in_num_on_light_night
+  # in_num_on_light_night_ent: >-
+  #   {% if (in_num_on_light_night | length > 0) %}
+  #     {{ in_num_on_light_night | int }}
+  #   {% else %}
+  #     {{ in_num_on_light_night_constant | int }}
+  #   {% endif %}
+  in_num_dim_light_day_ent: !input in_num_dim_light_day
+  # in_num_dim_light_day_ent: >-
+  #   {% if (in_num_dim_light_day | length > 0) %}
+  #     {{ in_num_dim_light_day | int }}
+  #   {% else %}
+  #     {{ in_num_dim_light_day_constant | int }}
+  #   {% endif %}
+  in_num_dim_light_night_ent: !input in_num_dim_light_night
+  # in_num_dim_light_night_ent: >-
+  #   {% if (in_num_dim_light_night | length > 0) %}
+  #     {{ in_num_dim_light_night | int }}
+  #   {% else %}
+  #     {{ in_num_dim_light_night_constant | int }}
+  #   {% endif %}
+  in_num_transition_time_ent: !input in_num_transition_time
+  # in_num_transition_time_ent: >-
+  #   {% if (in_num_transition_time | length > 0) %}
+  #     {{ in_num_transition_time | int }}
+  #   {% else %}
+  #     {{ in_num_transition_time_constant | int }}
+  #   {% endif %}
+  in_num_transition_time_fast_ent: !input in_num_transition_time_fast
+  # in_num_transition_time_fast_ent: >-
+  #   {% if (in_num_transition_time_fast | length > 0) %}
+  #     {{ in_num_transition_time_fast | int }}
+  #   {% else %}
+  #     {{ in_num_transition_time_fast_constant | int }}
+  #   {% endif %}
+  in_num_hold_scene_ent: !input in_num_hold_scene
+  # in_num_hold_scene_ent: >-
+  #   {% if (in_num_hold_scene | length > 0) %}
+  #     {{ in_num_hold_scene | int }}
+  #   {% else %}
+  #     {{ in_num_hold_scene_constant | int }}
+  #   {% endif %}
   # create the temp scene name based off this automation's ID
-  temp_scene_name_ent: >-
-    jjs_recovery_scene_for_zone_{{ this.entity_id.split('.')[-1] }}
-  in_datetime_day_time_ent: >-
-    {% if in_datetime_day_time | length > 0 %}
-      {{ states(in_datetime_day_time) }}
-    {% else %}
-      {{ in_datetime_day_time_constant }}
-    {% endif %}
-  in_datetime_night_time_ent: >-
-    {% if in_datetime_night_time | length > 0 %}
-      {{ states(in_datetime_night_time) }}
-    {% else %}
-      {{ in_datetime_night_time_constant }}
-    {% endif %}
-  in_bool_auto_enable_ent: >-
-    {% if (in_bool_auto_enable | length > 0) %}
-      {{ in_bool_auto_enable }}
-    {% else %}
-      true
-    {% endif %}
+  # temp_scene_name_ent: >-
+  #   jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}
+  in_datetime_day_time_ent: !input in_datetime_day_time
+  # in_datetime_day_time_ent: >-
+  #   {% if in_datetime_day_time | length > 0 %}
+  #     {{ states(in_datetime_day_time) }}
+  #   {% else %}
+  #     {{ in_datetime_day_time_constant }}
+  #   {% endif %}
+  in_datetime_night_time_ent: !input in_datetime_night_time
+  # in_datetime_night_time_ent: >-
+  #   {% if in_datetime_night_time | length > 0 %}
+  #     {{ states(in_datetime_night_time) }}
+  #   {% else %}
+  #     {{ in_datetime_night_time_constant }}
+  #   {% endif %}
+  # in_bool_auto_enable_ent: !input in_bool_auto_enable
+  # in_bool_auto_enable_ent: >-
+  #   {% if (in_bool_auto_enable | length > 0) %}
+  #     {{ in_bool_auto_enable }}
+  #   {% else %}
+  #     true
+  #   {% endif %}
   #active_lights helps to only turn on or only dim lights that were on already for the on > dim or also off > on (preserved scene)
-  active_lights: >-
-    {{ expand(light_target)
-       | selectattr('state', 'eq', 'on')
-       | map(attribute='entity_id')
-       | list }}
-  same_timer_check: "{{ timer_on_to_dim == timer_dim_to_off }}"
+  # active_lights: >-
+  #   {{ expand(light_target)
+  #      | selectattr('state', 'eq', 'on')
+  #      | map(attribute='entity_id')
+  #      | list }}
+  # same_timer_check: "{{ timer_on_to_dim == timer_dim_to_off }}"
 # alias: JJs light ctrl with helpers
 trigger:
   - platform: state
@@ -510,13 +520,19 @@ action:
   #       - stop: "Same timers detected. Stopping automation."
   #   - default:
   - if:
-      - condition: template
-        value_template: >
-          {% if in_bool_auto_enable | length > 0 %}
-            {{ is_state(in_bool_auto_enable, "on") }}
-          {% else %}
-            true
-          {% endif %}
+      - condition: state
+        entity_id: !input in_bool_auto_enable
+        state: "on"
+      #need to find out why this wasn't working.
+      # - condition: template
+      #   value_template: >
+      #     {% if in_bool_auto_enable is defined 
+      #           and in_bool_auto_enable|trim != "" 
+      #           and states(in_bool_auto_enable) != "unknown" %}
+      #       {{ is_state(in_bool_auto_enable, "on") }}
+      #     {% else %}
+      #       true
+      #     {% endif %}
     then:
       - choose:
           - conditions:
@@ -601,7 +617,7 @@ action:
                           transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                         target:
                           entity_id:
-                            - scene.{{ temp_scene_name_ent }}
+                            - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
                       - service: timer.cancel
                         data: {}
                         target:
@@ -692,7 +708,7 @@ action:
                       transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                     target:
                       entity_id:
-                        - scene.{{ temp_scene_name_ent }}
+                        - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
                   - service: timer.cancel
                     data: {}
                     target:
@@ -723,10 +739,10 @@ action:
                 then:
                   - service: scene.create
                     data:
-                      # snapshot_entities: !input light_target
+                      snapshot_entities: !input light_target
                       #attempting to preserve only the lights that were on for scenes where some are off
-                      snapshot_entities: "{{ active_lights }}"
-                      scene_id: "{{ temp_scene_name_ent }}"
+                      # snapshot_entities: "{{ active_lights }}"
+                      scene_id: "jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
                     enabled: true
                   - if:
                       - condition: template
@@ -747,18 +763,18 @@ action:
                                 {{ (((state_attr(light_target_ent,'brightness')|int(0)) * -1) + 5) }}
                               transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                             target:
-                              # entity_id: !input light_target
+                              entity_id: !input light_target
                               #hoping that using active lights here will not turn on extra lights
-                              entity_id: "{{ active_lights }}"
+                              # entity_id: "{{ active_lights }}"
                         else:
                           - service: light.turn_on
                             data:
                               brightness_step: "{{ ((states(in_num_dim_amt_ent)|int)*-1) }}"
                               transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                             target:
-                              # entity_id: !input light_target
+                              entity_id: !input light_target
                               #hoping that using active lights here will not turn on extra lights
-                              entity_id: "{{ active_lights }}"
+                              # entity_id: "{{ active_lights }}"
                   - if:
                       - condition: template
                         # Daytime condition:
