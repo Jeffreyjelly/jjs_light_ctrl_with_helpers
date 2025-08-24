@@ -12,37 +12,37 @@
 # use_blueprint:
 #   path: Jeffreyjelly/JJs_light_ctrl_w_helpers.yaml
 #   input:
-#     in_bool_auto_enable: input_boolean.in_bool_roomexample_auto_enable
-#     in_num_on_light_day: input_number.in_num_roomexample_on_light_day_dly
-#     in_num_on_light_night: input_number.in_num_roomexample_on_light_night_dly
-#     in_num_dim_light_day: input_number.in_num_roomexample_dim_light_day_dly
-#     in_num_dim_light_night: input_number.in_num_roomexample_dim_light_night_dly
-#     in_num_hold_scene: input_number.in_num_roomexample_hold_scene
-#     scene_day_light: scene.roomexample_relax
-#     scene_night_light: scene.roomexample_nightlight
+#     in_bool_auto_enable: input_boolean.in_bool_auto_enable_roomexample
+#     in_num_on_light_day: input_number.in_num_on_light_day_dly_roomexample
+#     in_num_on_light_night: input_number.in_num_on_light_night_dly_roomexample
+#     in_num_dim_light_day: input_number.in_num_dim_light_day_dly_roomexample
+#     in_num_dim_light_night: input_number.in_num_dim_light_night_dly_roomexample
+#     in_num_hold_scene: input_number.in_num_hold_scene_roomexample
+#     scene_day_light: scene.scene_relax_roomexample
+#     scene_night_light: scene.scene_nightlight_roomexample
 #
 ##
 ## Commented out inputs that are in the config_jj_light_helper.yaml
 ##
 #
-#     in_num_dim_amt: input_number.in_num_roomexample_dim_amt
-#     in_num_transition_time: input_number.in_num_roomexample_transition_time_norm
-#     in_num_transition_time_fast: input_number.in_num_roomexample_transition_time_fast
-#     in_datetime_day_time: input_datetime.in_datetime_roomexample_day
-#     in_datetime_night_time: input_datetime.in_datetime_roomexample_night
+#     in_num_dim_amt: input_number.in_num_dim_amt_roomexample
+#     in_num_transition_time: input_number.in_num_transition_time_norm_roomexample
+#     in_num_transition_time_fast: input_number.in_num_transition_time_fast_roomexample
+#     in_datetime_day_time: input_datetime.in_datetime_day_roomexample
+#     in_datetime_night_time: input_datetime.in_datetime_night_roomexample
 #
 
 #input_boolean
 input_boolean:
-  in_bool_roomexample_auto_enable:
-    name: in bool roomexample auto enable
+  in_bool_auto_enable_roomexample:
+    name: in bool auto enable roomexample
     icon: mdi:flash-auto
     initial: on
 
 #input_numbers
 input_number:
-  in_num_roomexample_on_light_day_dly:
-    name: in num roomexample on light day dly
+  in_num_on_light_day_dly_roomexample:
+    name: in num on light day dly roomexample
     min: 20
     max: 7200
     #removed inital because every time HA reset it seemed to put it back to that number
@@ -51,8 +51,8 @@ input_number:
     mode: box #or slider
     unit_of_measurement: seconds
     icon: mdi:timer-minus
-  in_num_roomexample_on_light_night_dly:
-    name: in num roomexample on light night dly
+  in_num_on_light_night_dly_roomexample:
+    name: in num on light night dly roomexample
     min: 20
     max: 7200
     #removed inital because every time HA reset it seemed to put it back to that number
@@ -61,8 +61,8 @@ input_number:
     mode: box #or slider
     unit_of_measurement: seconds
     icon: mdi:timer-minus-outline
-  in_num_roomexample_dim_light_day_dly:
-    name: in num roomexample dim light day dly
+  in_num_dim_light_day_dly_roomexample:
+    name: in num dim light day dly roomexample
     min: 10
     max: 1800
     #removed inital because every time HA reset it seemed to put it back to that number
@@ -71,8 +71,8 @@ input_number:
     mode: box #or slider
     unit_of_measurement: seconds
     icon: mdi:timer-off
-  in_num_roomexample_dim_light_night_dly:
-    name: in num roomexample dim light night dly
+  in_num_dim_light_night_dly_roomexample:
+    name: in num dim light night dly roomexample
     min: 10
     max: 1800
     #removed inital because every time HA reset it seemed to put it back to that number
@@ -81,8 +81,8 @@ input_number:
     mode: box #or slider
     unit_of_measurement: seconds
     icon: mdi:timer-off-outline
-  in_num_roomexample_hold_scene:
-    name: in num roomexample hold scene
+  in_num_hold_scene_roomexample:
+    name: in num hold scene roomexample
     min: 10
     max: 7200
     step: 1
@@ -93,7 +93,7 @@ input_number:
 #scenes
 scene:
   #same values for the philips hue for "Relax" scene
-  - name: roomexample Relax
+  - name: Relax roomexample
     icon: "mdi:seat-outline"
     entities:
       light.group_roomexample_all:
@@ -101,10 +101,10 @@ scene:
         brightness: 145
         color_temp_kelvin: 2237
         color_temp: 447
-    id: scene_roomexample_relax
+    id: scene_relax_roomexample
 
   #same values for the philips hue for "Read" scene
-  - name: roomexample Read
+  - name: Read roomexample
     icon: "mdi:book-open"
     entities:
       light.group_roomexample_all:
@@ -112,10 +112,10 @@ scene:
         brightness: 255
         color_temp_kelvin: 2890
         color_temp: 346
-    id: scene_roomexample_read
+    id: scene_read_roomexample
 
   #same values for the philips hue for "Energize" scene
-  - name: roomexample Energize
+  - name: Energize roomexample
     icon: "mdi:rabbit"
     entities:
       light.group_roomexample_all:
@@ -123,10 +123,10 @@ scene:
         brightness: 255
         color_temp_kelvin: 6410
         color_temp: 156
-    id: scene_roomexample_energize
+    id: scene_energize_roomexample
 
   #same values for the philips hue for "Concentrate" scene
-  - name: roomexample Concentrate
+  - name: Concentrate roomexample
     icon: "mdi:thought-bubble"
     entities:
       light.group_roomexample_all:
@@ -134,10 +134,10 @@ scene:
         brightness: 255
         color_temp_kelvin: 4291
         color_temp: 233
-    id: scene_roomexample_concentrate
+    id: scene_concentrate_roomexample
 
   #nightlight
-  - name: roomexample Nightlight
+  - name: Nightlight roomexample
     icon: "mdi:weather-night"
     entities:
       light.group_roomexample_all:
@@ -145,12 +145,12 @@ scene:
         brightness: 75
         color_temp_kelvin: 2237
         color_temp: 447
-    id: scene_roomexample_nightlight
+    id: scene_nightlight_roomexample
     
 
 
   # #if you want specific dimming percentage per the room uncomment this
-  # in_num_roomexample_dim_amt:
+  # in_num_dim_amt_roomexample:
   #   name: in num dim amount for roomexample
   #   min: 0
   #   max: 255
@@ -160,7 +160,7 @@ scene:
   #   icon: mdi:debug-step-into
 
   # #if you want specific transition time per the room uncomment this
-  # in_num_roomexample_transition_time_norm:
+  # in_num_transition_time_norm_roomexample:
   #   name: in num roomexample transition time norm
   #   min: 0
   #   max: 10
@@ -170,7 +170,7 @@ scene:
   #   mode: slider
   #   unit_of_measurement: seconds
   #   icon: mdi:transition
-  # in_num_roomexample_transition_time_fast:
+  # in_num_transition_time_fast_roomexample:
   #   name: in num roomexample transition time fast
   #   min: 0
   #   max: 3
@@ -184,15 +184,15 @@ scene:
 # #if you wanted a specific datetime per the room uncomment these
 # #input_datetime
 # input_datetime:
-#   in_datetime_roomexample_day:
-#     name: in datetime roomexample day
+#   in_datetime_day_roomexample:
+#     name: in datetime day roomexample
 #     has_date: false
 #     has_time: true
 #     #removed inital because every time HA reset it seemed to put it back to that number
 #     # initial: "5:15"
 #     icon: mdi:sun-clock-outline
-#   in_datetime_roomexample_night:
-#     name: in datetime roomexample night
+#   in_datetime_night_roomexample:
+#     name: in datetime night roomexample
 #     has_date: false
 #     has_time: true
 #     #removed inital because every time HA reset it seemed to put it back to that number

@@ -13,9 +13,9 @@
 # use_blueprint:
 #   path: Jeffreyjelly/JJs_light_ctrl_w_helpers.yaml
 #   input:
-#     light_target: light.group_roomexample_all
-#     timer_on_to_dim: timer.timer_roomexample_motion_to_dim
-#     timer_dim_to_off: timer.timer_roomexample_dim_to_off
+#     light_target: light.group_all_roomexample
+#     timer_on_to_dim: timer.timer_motion_to_dim_roomexample
+#     timer_dim_to_off: timer.timer_dim_to_off_roomexample
 #
 
 # #if you needed an example light group uncomment this section below
@@ -23,19 +23,19 @@
 # #light group
 # light:
 #   - platform: group
-#     name: group_roomexample_all
+#     name: group_all_roomexample
 #     entities:
 #       - light.roomexample_bulb_1
 #       - light.roomexample_bulb_2
 
 #timers
 timer:
-  timer_roomexample_motion_to_dim:
-    name: timer roomexample motion to dim
+  timer_motion_to_dim_roomexample:
+    name: timer motion to dim roomexample
     icon: mdi:lightbulb-on-90
     restore: true
-  timer_roomexample_dim_to_off:
-    name: timer roomexample dim to off
+  timer_dim_to_off_roomexample:
+    name: timer dim to off roomexample
     icon: mdi:lightbulb-on-20
     restore: true
 
