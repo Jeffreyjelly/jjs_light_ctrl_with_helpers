@@ -96,7 +96,7 @@ scene:
   - name: Relax roomexample
     icon: "mdi:seat-outline"
     entities:
-      light.group_roomexample_all:
+      light.group_all_roomexample:
         state: "on"
         brightness: 145
         color_temp_kelvin: 2237
@@ -107,7 +107,7 @@ scene:
   - name: Read roomexample
     icon: "mdi:book-open"
     entities:
-      light.group_roomexample_all:
+      light.group_all_roomexample:
         state: "on"
         brightness: 255
         color_temp_kelvin: 2890
@@ -118,7 +118,7 @@ scene:
   - name: Energize roomexample
     icon: "mdi:rabbit"
     entities:
-      light.group_roomexample_all:
+      light.group_all_roomexample:
         state: "on"
         brightness: 255
         color_temp_kelvin: 6410
@@ -129,7 +129,7 @@ scene:
   - name: Concentrate roomexample
     icon: "mdi:thought-bubble"
     entities:
-      light.group_roomexample_all:
+      light.group_all_roomexample:
         state: "on"
         brightness: 255
         color_temp_kelvin: 4291
@@ -140,7 +140,7 @@ scene:
   - name: Nightlight roomexample
     icon: "mdi:weather-night"
     entities:
-      light.group_roomexample_all:
+      light.group_all_roomexample:
         state: "on"
         brightness: 75
         color_temp_kelvin: 2237
