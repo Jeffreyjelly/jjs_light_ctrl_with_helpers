@@ -103,6 +103,7 @@ blueprint
  - ~~When the lights are turned off manually and the timer for `motion to dim` is still active the lights wont turn back on.~~
  - still seems to be problem when the lights are getting stuck at the dim value but I haven't figured out what path is causing it yet. (happens very rarely at this point but might be something happening right after dimming)
  - if you have a light group that has a light that went offline it doesn't turn the lights back on with the scene correctly because it'll sometimes think one of the lights is still on.
+ - Need to fix to add a delay at the end of the dim to off because turning the lights off at the very end with a higher end pc is faster causes the in num hold scene counter to reset
 
 ## Revision history
  - 1.3.12 - 2025_08_08
