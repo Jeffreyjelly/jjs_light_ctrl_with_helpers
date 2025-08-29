@@ -28,6 +28,13 @@
 #       - light.roomexample_bulb_1
 #       - light.roomexample_bulb_2
 
+#input_boolean
+input_boolean:
+  in_bool_light_state:
+    name: in bool light state
+    icon: mdi:light-switch-off
+    initial: on
+
 #timers
 timer:
   timer_motion_to_dim_roomexample:

@@ -1,7 +1,7 @@
 blueprint:
   name: "⚡\U0001F4A1 JJs Light Control With Helpers \U0001F4A1⚡"
   description: "# JJs Light Control With Helpers\n
-    **Version: 1.3.18**\n
+    **Version: 1.3.19**\n
     ## Light control automation that has:\n
     - Two light scenes, one for day and night\n
     - Wont override the current light state if manually changed\n
@@ -72,6 +72,12 @@ blueprint:
               domain:
                 - binary_sensor
               multiple: false
+        on_time_delay:
+          name: on_time_delay
+          description:
+            "- How long the motion_detected_device should remain in this state before triggering (off > on for the motion_detected_device only)"
+          selector:
+            duration: {}
         motion_not_detected_device:
           name: Motion not detected
           description:
@@ -85,6 +91,12 @@ blueprint:
               domain:
                 - binary_sensor
               multiple: false
+        off_time_delay:
+          name: off_time_delay
+          description: 
+            "- How long the motion_not_detected_device should remain in this state before triggering (on > off only, off > on will be 0 still for the motion_not_detected_device)"
+          selector:
+            duration: {}
     timer_settings:
       collapsed: true
       name: timers for the automation to run *
@@ -388,6 +400,16 @@ blueprint:
           default: true
           selector:
             boolean:
+        in_bool_light_state:
+          name: Input boolean Light State (needed due to some devices not statusing unknown or not)
+          description:
+            "### \U0001F51B\n- input_boolean helper for controlling the lights on or off"
+          default: []
+          selector:
+            entity:
+              domain:
+                - input_boolean
+              multiple: false
   source_url: https://github.com/Jeffreyjelly/jjs_light_ctrl_with_helpers/blob/main/blueprints/JJs_light_ctrl_w_helpers/JJs_light_ctrl_w_helpers.yaml
 mode: single
 variables:
@@ -487,11 +509,13 @@ trigger:
     to: "on"
     id: motion_detected
     alias: motion_detected_device > motion_detected
+    for: !input on_time_delay
   - platform: state
     entity_id: !input motion_not_detected_device
     to: "off"
     id: motion_stopped
     alias: motion_not_detected_device > motion_stopped
+    for: !input off_time_delay
   - platform: state
     entity_id: !input motion_not_detected_device
     to: "on"
@@ -521,7 +545,7 @@ action:
   #     - condition: template
   #       value_template: "{{ not same_timer_check }}"
   #     sequence:
-  #       - service: persistent_notification.create
+  #       - action: persistent_notification.create
   #         data:
   #           title: "Blueprint Setup Error"
   #           message: "You cannot use the same timer for both timer_on_to_dim and timer_dim_to_off."
@@ -546,12 +570,20 @@ action:
           - conditions:
               - condition: trigger
                 id: motion_detected
+            #when motion starts with or without the timers intact
             sequence:
+              # all paths below turn on the lights, turn this on.
+              - action: input_boolean.turn_on
+                target:
+                  entity_id: !input in_bool_light_state
               - if:
                   - condition: and
                     conditions:
+                      # - condition: state
+                      #   entity_id: !input light_target
+                      #   state: "off"
                       - condition: state
-                        entity_id: !input light_target
+                        entity_id: !input in_bool_light_state
                         state: "off"
                       #removing in case if the user manually turn off the lights while the first timer was active
                       # - condition: state
@@ -585,13 +617,13 @@ action:
                         - condition: template
                           value_template: "{{ in_bool_transition_enable }}"
                         then:
-                          - service: scene.turn_on
+                          - action: scene.turn_on
                             target:
                               entity_id: !input scene_day_light
                             data:
                               transition: "{{states(in_num_transition_time_ent) | int }}"
                         else:
-                          - service: scene.turn_on
+                          - action: scene.turn_on
                             target:
                               entity_id: !input scene_day_light
                       - delay:
@@ -600,7 +632,7 @@ action:
                           seconds: "{{states(in_num_transition_time_ent) | int }}"
                           milliseconds: 0
                       #added this second turn on for finicky lights that don't turn on the first time they're issued to turn on
-                      - service: scene.turn_on
+                      - action: scene.turn_on
                         target:
                           entity_id: !input scene_day_light
                         data:
@@ -627,13 +659,13 @@ action:
                             - condition: template
                               value_template: "{{ in_bool_transition_enable }}"
                             then:
-                              - service: scene.turn_on
+                              - action: scene.turn_on
                                 target:
                                   entity_id: !input scene_night_light
                                 data:
                                   transition: "{{ states(in_num_transition_time_ent)| int }}"
                             else:
-                              - service: scene.turn_on
+                              - action: scene.turn_on
                                 target:
                                   entity_id: !input scene_night_light
                           - delay:
@@ -642,7 +674,7 @@ action:
                               seconds: "{{states(in_num_transition_time_ent) | int }}"
                               milliseconds: 0
                           #added this second turn on for finicky lights that don't turn on the first time they're issued to turn on
-                          - service: scene.turn_on
+                          - action: scene.turn_on
                             target:
                               entity_id: !input scene_night_light
                             data:
@@ -656,21 +688,21 @@ action:
                         entity_id: !input timer_dim_to_off
                         state: active
                     then:
-                      - service: timer.cancel
+                      - action: timer.cancel
                         target:
                           entity_id: !input timer_dim_to_off
                       - if:
                         - condition: template
                           value_template: "{{ in_bool_transition_enable }}"
                         then:
-                          - service: scene.turn_on
+                          - action: scene.turn_on
                             data:
                               transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                             target:
                               entity_id:
                                 - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
                         else:
-                          - service: scene.turn_on
+                          - action: scene.turn_on
                             target:
                               entity_id:
                                 - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
@@ -680,7 +712,7 @@ action:
                           seconds: "{{states(in_num_transition_time_fast_ent) | int }}"
                           milliseconds: 0
                       #added this second turn on for finicky lights that don't turn on the first time they're issued to turn on
-                      - service: scene.turn_on
+                      - action: scene.turn_on
                         data:
                           transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                         target:
@@ -690,7 +722,7 @@ action:
                       if timer dim_to_off is active revert to saved scene else, clear out
                       the on_to_dim timer
                     else:
-                      - service: timer.cancel
+                      - action: timer.cancel
                         target:
                           entity_id: !input timer_on_to_dim
                 alias:
@@ -702,6 +734,10 @@ action:
                   - motion_stopped
             #when motion stops and the timer_on_to_dim starts up
             sequence:
+              # tell future actions that the lights were on incase this wasn't set.
+              - action: input_boolean.turn_on
+                target:
+                  entity_id: !input in_bool_light_state
               - if:
                   - condition: template
                     # Daytime condition:
@@ -721,7 +757,7 @@ action:
                       }}
                     alias: Time condition day
                 then:
-                  - service: timer.start
+                  - action: timer.start
                     data:
                       duration:
                         "{{ (states(in_num_on_light_day_ent)|int )|timestamp_custom('%H:%M:%S',
@@ -746,7 +782,7 @@ action:
                           }}
                         alias: Time condition night
                     then:
-                      - service: timer.start
+                      - action: timer.start
                         data:
                           duration:
                             "{{ (states(in_num_on_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
@@ -761,26 +797,30 @@ action:
                   - motion_stopped_canceled
             #when the sensor that keeps the lights on senses motion
             sequence:
+              # all paths below turn on the lights, turn this on.
+              - action: input_boolean.turn_on
+                target:
+                  entity_id: !input in_bool_light_state
               - if:
                   - condition: state
                     entity_id: !input timer_dim_to_off
                     state: active
                 then:
-                  - service: timer.cancel
+                  - action: timer.cancel
                     target:
                       entity_id: !input timer_dim_to_off
                   - if:
                     - condition: template
                       value_template: "{{ in_bool_transition_enable }}"
                     then:
-                      - service: scene.turn_on
+                      - action: scene.turn_on
                         data:
                           transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
                         target:
                           entity_id:
                             - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
                     else:
-                      - service: scene.turn_on
+                      - action: scene.turn_on
                         target:
                           entity_id:
                             - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
@@ -788,7 +828,8 @@ action:
                   if timer dim_to_off is active revert to saved scene and cancel timer
                   else, cancel the on_to_dim timer
                 else:
-                  - service: timer.cancel
+                  # the lights are on and only the timer_on_to_dim was most likely active so cancel it
+                  - action: timer.cancel
                     data: {}
                     target:
                       entity_id: !input timer_on_to_dim
@@ -801,14 +842,17 @@ action:
               - if:
                   - condition: and
                     conditions:
+                      # - condition: state
+                      #   entity_id: !input light_target
+                      #   state: "on"
                       - condition: state
-                        entity_id: !input light_target
+                        entity_id: !input in_bool_light_state
                         state: "on"
                       - condition: state
                         entity_id: !input timer_on_to_dim
                         state: idle
                 then:
-                  - service: scene.create
+                  - action: scene.create
                     data:
                       snapshot_entities: !input light_target
                       #attempting to preserve only the lights that were on for scenes where some are off
@@ -832,7 +876,7 @@ action:
                             - condition: template
                               value_template: "{{ in_bool_transition_enable }}"
                             then:
-                              - service: light.turn_on
+                              - action: light.turn_on
                                 data:
                                   brightness_step: >-
                                     {{ (((state_attr(light_target_ent,'brightness')|int(0)) * -1) + 5) }}
@@ -842,7 +886,7 @@ action:
                                   #hoping that using active lights here will not turn on extra lights
                                   # entity_id: "{{ active_lights }}"
                             else:
-                              - service: light.turn_on
+                              - action: light.turn_on
                                 data:
                                   brightness_step: >-
                                     {{ (((state_attr(light_target_ent,'brightness')|int(0)) * -1) + 5) }}
@@ -855,7 +899,7 @@ action:
                             - condition: template
                               value_template: "{{ in_bool_transition_enable }}"
                             then:
-                              - service: light.turn_on
+                              - action: light.turn_on
                                 data:
                                   brightness_step: "{{ ((states(in_num_dim_amt_ent)|int)*-1) }}"
                                   transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
@@ -864,7 +908,7 @@ action:
                                   #hoping that using active lights here will not turn on extra lights
                                   # entity_id: "{{ active_lights }}"
                             else:
-                              - service: light.turn_on
+                              - action: light.turn_on
                                 data:
                                   brightness_step: "{{ ((states(in_num_dim_amt_ent)|int)*-1) }}"
                                 target:
@@ -890,7 +934,7 @@ action:
                           }}
                         alias: Time condition day
                     then:
-                      - service: timer.start
+                      - action: timer.start
                         data:
                           duration:
                             "{{ (states(in_num_dim_light_day_ent)|int)|timestamp_custom('%H:%M:%S',
@@ -915,7 +959,7 @@ action:
                               }}
                             alias: Time condition night
                         then:
-                          - service: timer.start
+                          - action: timer.start
                             data:
                               duration:
                                 "{{ (states(in_num_dim_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
@@ -933,21 +977,28 @@ action:
               - if:
                   - condition: and
                     conditions:
+                      # - condition: state
+                      #   entity_id: !input light_target
+                      #   state: "on"
                       - condition: state
-                        entity_id: !input light_target
+                        entity_id: !input in_bool_light_state
                         state: "on"
                 then:
+                  # turning off the lights, turn this off.
+                  - action: input_boolean.turn_off
+                    target:
+                      entity_id: !input in_bool_light_state
                   - if:
                     - condition: template
                       value_template: "{{ in_bool_transition_enable }}"
                     then:
-                      - service: light.turn_off
+                      - action: light.turn_off
                         data:
                           transition: "{{ states(in_num_transition_time_ent) | int }}"
                         target:
                           entity_id: !input light_target
                     else:
-                      - service: light.turn_off
+                      - action: light.turn_off
                         target:
                           entity_id: !input light_target
                   - if:
@@ -969,7 +1020,7 @@ action:
                           }}
                         alias: Time condition day
                     then:
-                      - service: timer.start
+                      - action: timer.start
                         data:
                           duration:
                             "{{ (states(in_num_hold_scene_ent)|int)|timestamp_custom('%H:%M:%S',
@@ -994,7 +1045,7 @@ action:
                               }}
                             alias: Time condition night
                         then:
-                          - service: timer.start
+                          - action: timer.start
                             data:
                               duration:
                                 "{{ (states(in_num_hold_scene_ent)|int)|timestamp_custom('%H:%M:%S',
@@ -1011,7 +1062,11 @@ action:
               - condition: trigger
                 id: manual_off
             sequence:
-              - service: timer.cancel
+              # manually turned off the lights, turn this off.
+              - action: input_boolean.turn_off
+                target:
+                  entity_id: !input in_bool_light_state
+              - action: timer.cancel
                 data: {}
                 target:
                   entity_id:
