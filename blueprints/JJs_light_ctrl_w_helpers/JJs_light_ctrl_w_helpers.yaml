@@ -572,10 +572,6 @@ action:
                 id: motion_detected
             #when motion starts with or without the timers intact
             sequence:
-              # all paths below turn on the lights, turn this on.
-              - action: input_boolean.turn_on
-                target:
-                  entity_id: !input in_bool_light_state
               - if:
                   - condition: and
                     conditions:
@@ -728,6 +724,10 @@ action:
                 alias:
                   if all lights are off and all timers are idle set scene else, recover
                   scene
+              # all paths above turn on the lights, turn this on.
+              - action: input_boolean.turn_on
+                target:
+                  entity_id: !input in_bool_light_state
           - conditions:
               - condition: trigger
                 id:
