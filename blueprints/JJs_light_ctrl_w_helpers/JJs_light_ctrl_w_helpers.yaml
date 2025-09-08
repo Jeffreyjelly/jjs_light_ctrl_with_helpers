@@ -1,7 +1,7 @@
 blueprint:
   name: "⚡\U0001F4A1 JJs Light Control With Helpers \U0001F4A1⚡"
   description: "# JJs Light Control With Helpers\n
-    **Version: 1.3.20**\n
+    **Version: 1.3.21**\n
     ## Light control automation that has:\n
     - Two light scenes, one for day and night\n
     - Wont override the current light state if manually changed\n
@@ -605,8 +605,8 @@ action:
                       - delay:
                           hours: 0
                           minutes: 0
-                          seconds: "{{ states(in_num_transition_time_ent) | int }}"
-                          milliseconds: 0
+                          seconds: 0
+                          milliseconds: 300
                       #added this second turn on for finicky lights that don't turn on the first time they're issued to turn on
                       - service: scene.turn_on
                         target:
@@ -648,8 +648,8 @@ action:
                           - delay:
                               hours: 0
                               minutes: 0
-                              seconds: "{{ states(in_num_transition_time_ent) | int }}"
-                              milliseconds: 0
+                              seconds: 0
+                              milliseconds: 300
                           #added this second turn on for finicky lights that don't turn on the first time they're issued to turn on
                           - service: scene.turn_on
                             target:
@@ -687,8 +687,8 @@ action:
                       - delay:
                           hours: 0
                           minutes: 0
-                          seconds: "{{ states(in_num_transition_time_fast_ent) | int }}"
-                          milliseconds: 0
+                          seconds: 0
+                          milliseconds: 300
                       #added this second turn on for finicky lights that don't turn on the first time they're issued to turn on
                       - service: scene.turn_on
                         data:
