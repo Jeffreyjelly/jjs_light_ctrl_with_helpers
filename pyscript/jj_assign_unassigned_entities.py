@@ -4,7 +4,7 @@
 # data:
 #   target_area_name: "master bedroom"
 #   entity_match: "masterbedroom"
-#   move_entities_from_area_name: None
+#   #move_entities_from_area_name: "hallway"
 #   verbose: False
 
 
