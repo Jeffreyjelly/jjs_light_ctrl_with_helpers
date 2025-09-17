@@ -1,3 +1,16 @@
+# Once pyscript is installed > Developer Tools > Actions > choose jj_rename_devices_and_entities
+
+# action: pyscript.jj_rename_devices_and_entities
+# data:
+#   device_and_entity_match: "0x5cc7c1fffe890f57"
+#   replace_text: "0x5cc7c1fffe890f57"
+#   with_text: btn2_ikea_2025_n03
+#   device_name_all_underscores: true
+#   device_remove_with_text_underscores: true
+#   swap: true
+#   verbose: false
+
+
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers import device_registry as dr
 from homeassistant.components.persistent_notification import create as notify

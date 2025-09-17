@@ -1,3 +1,13 @@
+# Once pyscript is installed > Developer Tools > Actions > choose jj_assign_entities_to_area
+
+# action: pyscript.jj_assign_entities_to_area
+# data:
+#   target_area_name: "master bedroom"
+#   entity_match: "masterbedroom"
+#   move_entities_from_area_name: None
+#   verbose: False
+
+
 from homeassistant.helpers import entity_registry as er, area_registry as ar
 from homeassistant.components.persistent_notification import create as notify
 
