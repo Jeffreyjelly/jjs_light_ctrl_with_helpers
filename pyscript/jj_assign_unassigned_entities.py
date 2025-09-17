@@ -2,7 +2,7 @@ from homeassistant.helpers import entity_registry as er, area_registry as ar
 from homeassistant.components.persistent_notification import create as notify
 
 @service
-def assign_entities_to_area(
+def jj_assign_entities_to_area(
     target_area_name: str = "master bedroom",
     entity_match: str = "masterbedroom",
     move_entities_from_area_name: str = None,
