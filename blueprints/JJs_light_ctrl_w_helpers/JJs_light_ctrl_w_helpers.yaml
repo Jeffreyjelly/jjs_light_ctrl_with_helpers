@@ -1,7 +1,7 @@
 blueprint:
   name: "⚡\U0001F4A1 JJs Light Control With Helpers \U0001F4A1⚡"
   description: "# JJs Light Control With Helpers\n
-    **Version: 1.3.22**\n
+    **Version: 1.3.23**\n
     ## Light control automation that has:\n
     - Two light scenes, one for day and night\n
     - Wont override the current light state if manually changed\n
@@ -553,6 +553,7 @@ action:
           - conditions:
               - condition: trigger
                 id: motion_detected
+            #motion sensed
             sequence:
               - if:
                   - condition: and
@@ -602,6 +603,7 @@ action:
                           - service: scene.turn_on
                             target:
                               entity_id: !input scene_day_light
+                      #all delay on motion sensed shouldn't need another check due to all timers should be disabled
                       - delay:
                           hours: 0
                           minutes: 0
@@ -645,6 +647,7 @@ action:
                               - service: scene.turn_on
                                 target:
                                   entity_id: !input scene_night_light
+                          #all delay on motion sensed shouldn't need another check due to all timers should be disabled
                           - delay:
                               hours: 0
                               minutes: 0
@@ -684,6 +687,7 @@ action:
                             target:
                               entity_id:
                                 - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
+                      #all delay on motion sensed shouldn't need another check due to all timers should be disabled
                       - delay:
                           hours: 0
                           minutes: 0
@@ -708,8 +712,7 @@ action:
                   scene
           - conditions:
               - condition: trigger
-                id:
-                  - motion_stopped
+                id: motion_stopped
             #when motion stops and the timer_on_to_dim starts up
             sequence:
               - if:
@@ -765,10 +768,23 @@ action:
                           entity_id: !input timer_on_to_dim
                     alias: Night condition
                 alias: startup on_to_dim timer based on day
+              #end of sequence, check the sensors once more and turn the lights back on and disable the timers
+              - if:
+                - condition: or
+                  conditions:
+                    # - condition: state
+                    #   entity_id: !input motion_detected_device
+                    #   state: "on"
+                    - condition: state
+                      entity_id: !input motion_not_detected_device
+                      state: "on"
+                then:
+                  - service: timer.cancel
+                    target:
+                      entity_id: !input timer_on_to_dim
           - conditions:
               - condition: trigger
-                id:
-                  - motion_stopped_canceled
+                id: motion_stopped_canceled
             #when the sensor that keeps the lights on senses motion
             sequence:
               - if:
@@ -805,8 +821,7 @@ action:
                       entity_id: !input timer_on_to_dim
           - conditions:
               - condition: trigger
-                id:
-                  - motion_stopped_to_dim
+                id: motion_stopped_to_dim
             #when the timer_on_to_dim finishes execute code below
             sequence:
               - if:
@@ -853,6 +868,7 @@ action:
                                   entity_id: !input light_target
                                   #hoping that using active lights here will not turn on extra lights
                                   # entity_id: "{{ active_lights }}"
+                                                      #some delays need another check after to see if motion started again
                             else:
                               - service: light.turn_on
                                 data:
@@ -936,11 +952,40 @@ action:
                             target:
                               entity_id: !input timer_dim_to_off
                         alias: Night condition
+                  #end of sequence, check the sensors once more and turn the lights back on and disable the timers
+                  - if:
+                    - condition: or
+                      conditions:
+                        # - condition: state
+                        #   entity_id: !input motion_detected_device
+                        #   state: "on"
+                        - condition: state
+                          entity_id: !input motion_not_detected_device
+                          state: "on"
+                    then:
+                      - service: timer.cancel
+                        target:
+                          entity_id: !input timer_dim_to_off
+                      - if:
+                        - condition: template
+                          value_template: >
+                            {{ bool_transition_enable_ent | bool }}
+                        then:
+                          - service: scene.turn_on
+                            data:
+                              transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
+                            target:
+                              entity_id:
+                                - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
+                        else:
+                          - service: scene.turn_on
+                            target:
+                              entity_id:
+                                - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
                 enabled: true
           - conditions:
               - condition: trigger
-                id:
-                  - motion_stopped_to_off
+                id: motion_stopped_to_off
             #when the timer_dim_to_off finishes for both the lights being dim and for the duration after the lights are off
             sequence:
               - if:
@@ -1021,6 +1066,36 @@ action:
                   - stop:
                       Stopped because last timer expired with lights off and this is the
                       end of the automation.
+              #end of sequence, check the sensors once more and turn the lights back on and disable the timers
+              - if:
+                - condition: or
+                  conditions:
+                    # - condition: state
+                    #   entity_id: !input motion_detected_device
+                    #   state: "on"
+                    - condition: state
+                      entity_id: !input motion_not_detected_device
+                      state: "on"
+                then:
+                  - service: timer.cancel
+                    target:
+                      entity_id: !input timer_dim_to_off
+                  - if:
+                    - condition: template
+                      value_template: >
+                        {{ bool_transition_enable_ent | bool }}
+                    then:
+                      - service: scene.turn_on
+                        data:
+                          transition: "{{ states(in_num_transition_time_fast_ent) | int }}"
+                        target:
+                          entity_id:
+                            - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
+                    else:
+                      - service: scene.turn_on
+                        target:
+                          entity_id:
+                            - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
           - conditions:
               - condition: trigger
                 id: manual_off
