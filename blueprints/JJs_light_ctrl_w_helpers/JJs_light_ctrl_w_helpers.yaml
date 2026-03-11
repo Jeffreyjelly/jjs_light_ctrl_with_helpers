@@ -1,7 +1,7 @@
 blueprint:
   name: "⚡\U0001F4A1 JJs Light Control With Helpers \U0001F4A1⚡"
   description: "# JJs Light Control With Helpers\n
-    **Version: 1.3.23**\n
+    **Version: 1.3.25**\n
     ## Light control automation that has:\n
     - Two light scenes, one for day and night\n
     - Wont override the current light state if manually changed\n
@@ -513,8 +513,10 @@ trigger:
   - platform: state
     entity_id:
       - !input light_target
-    to: "off"
-    id: manual_off
+    to:
+      - "off"
+      - "on"
+    id: manual_ctrl
 condition: []
 action:
   # - choose:
@@ -734,13 +736,19 @@ action:
                       }}
                     alias: Time condition day
                 then:
-                  - service: timer.start
-                    data:
-                      duration:
-                        "{{ (states(in_num_on_light_day_ent)|int )|timestamp_custom('%H:%M:%S',
-                        false) }}"
-                    target:
-                      entity_id: !input timer_on_to_dim
+                  #check if lights are still on, if so start a timer
+                  - if:
+                      - condition: state
+                        entity_id: !input light_target
+                        state: "on"
+                    then:
+                      - service: timer.start
+                        data:
+                          duration:
+                            "{{ (states(in_num_on_light_day_ent)|int )|timestamp_custom('%H:%M:%S',
+                            false) }}"
+                        target:
+                          entity_id: !input timer_on_to_dim
                 else:
                   - if:
                       - condition: template
@@ -759,13 +767,19 @@ action:
                           }}
                         alias: Time condition night
                     then:
-                      - service: timer.start
-                        data:
-                          duration:
-                            "{{ (states(in_num_on_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
-                            false) }}"
-                        target:
-                          entity_id: !input timer_on_to_dim
+                      #check if lights are still on, if so start a timer
+                      - if:
+                          - condition: state
+                            entity_id: !input light_target
+                            state: "on"
+                        then:
+                          - service: timer.start
+                            data:
+                              duration:
+                                "{{ (states(in_num_on_light_night_ent)|int)|timestamp_custom('%H:%M:%S',
+                                false) }}"
+                            target:
+                              entity_id: !input timer_on_to_dim
                     alias: Night condition
                 alias: startup on_to_dim timer based on day
               #end of sequence, check the sensors once more and turn the lights back on and disable the timers
@@ -1098,7 +1112,7 @@ action:
                             - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
           - conditions:
               - condition: trigger
-                id: manual_off
+                id: manual_ctrl
             sequence:
               - service: timer.cancel
                 data: {}
