@@ -513,10 +513,11 @@ trigger:
   - platform: state
     entity_id:
       - !input light_target
+    from:
+      - "on"
     to:
       - "off"
-      - "on"
-    id: manual_ctrl
+    id: manual_off
 condition: []
 action:
   # - choose:
@@ -1112,7 +1113,7 @@ action:
                             - "scene.jjs_recovery_scene_for_zone_{{ light_target_ent.split('.')[-1] }}"
           - conditions:
               - condition: trigger
-                id: manual_ctrl
+                id: manual_off
             sequence:
               - service: timer.cancel
                 data: {}
